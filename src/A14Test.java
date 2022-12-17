@@ -48,7 +48,7 @@ class A14Test {
     @Test
     void findSolution() throws IOException {
         var board = A14.parseBoard(new File("a14.test.txt"));
-        var adjustedBoard = A14.findFinalPosition(board, new Point(500, 0));
-        assertEquals('o', adjustedBoard[8][500]);
+        var score = A14.calculate(board);
+        assertEquals(21, score);
     }
 }

@@ -7,6 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 public class A14 {
+
+    public static class RockBottomException extends RuntimeException
+    {
+
+    }
+
     public static List<List<Point>> parsePoints(File file) throws IOException {
         List<String> lines = Files.readAllLines(file.toPath());
         var points = new ArrayList<List<Point>>();
@@ -39,8 +45,25 @@ public class A14 {
         return board;
     }
 
+    public static long calculate(char[][] board)
+    {
+        int nrSandDrops = 0;
+        try{
+            while (true){
+                nrSandDrops++;
+                board = findFinalPosition(board, new Point(500,0));
+            }
+        } catch (RockBottomException ex) {
+
+        }
+        return nrSandDrops;
+    }
+
     public static Point trickleDown(char[][] board, Point particlePosition)
     {
+        if (particlePosition.y + 1 >= board.length)
+            throw new RockBottomException();
+
         if (board[particlePosition.y + 1][particlePosition.x] == 0){
             return new Point(particlePosition.x, particlePosition.y + 1);
         }
