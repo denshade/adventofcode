@@ -25,14 +25,32 @@ public class A14 {
 
     public static char[][] findFinalPosition(char[][] board, Point particlePosition)
     {
+        var currentPoint = particlePosition;
+        var pointHasChanged = true;
+        do {
+            var adjustedpoint = trickleDown(board, currentPoint);
+            pointHasChanged = !adjustedpoint.equals(currentPoint);
+            currentPoint = adjustedpoint;
+        } while(pointHasChanged);
         // while can trickleDown, do
         // if no longer can trickleDown
         // mark on the board.
+        board[currentPoint.y][currentPoint.x] = 'o';
         return board;
     }
 
     public static Point trickleDown(char[][] board, Point particlePosition)
     {
+        if (board[particlePosition.y + 1][particlePosition.x] == 0){
+            return new Point(particlePosition.x, particlePosition.y + 1);
+        }
+        else if (board[particlePosition.y + 1][particlePosition.x - 1] == 0){
+            return new Point(particlePosition.x - 1, particlePosition.y + 1);
+        }
+        else if (board[particlePosition.y + 1][particlePosition.x + 1] == 0){
+            return new Point(particlePosition.x + 1, particlePosition.y + 1);
+        }
+
         /*
         A unit of sand always falls down one step if possible.
         If the tile immediately below is blocked (by rock or sand), the unit of sand attempts to instead move
