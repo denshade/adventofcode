@@ -49,6 +49,6 @@ class A14Test {
     void findSolution() throws IOException {
         var board = A14.parseBoard(new File("a14.test.txt"));
         var score = A14.calculate(board);
-        assertEquals(21, score);
+        assertEquals(24, score);
     }
 }

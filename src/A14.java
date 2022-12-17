@@ -50,8 +50,9 @@ public class A14 {
         int nrSandDrops = 0;
         try{
             while (true){
-                nrSandDrops++;
                 board = findFinalPosition(board, new Point(500,0));
+                nrSandDrops++;
+                System.out.println(A14.showBoard(494, 503, 0, 9, board));
             }
         } catch (RockBottomException ex) {
 
