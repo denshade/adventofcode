@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -14,6 +15,16 @@ class A15Test
     @Test
     void loadData() throws IOException {
         assertEquals(26, A15.calculateOnLine(10, A15.loadSensors(new File("a15.test.txt"))));
+    }
+
+    @Test
+    void findUncoveredTest() throws IOException {
+        assertEquals(new Point(14, 11), A15.findPointNotTaken(A15.loadSensors(new File("a15.test.txt")), 20));
+    }
+
+    @Test
+    void findUncoveredFullTest() throws IOException {
+        assertEquals(new Point(14, 11), A15.findPointNotTaken(A15.loadSensors(new File("a15.full.txt")), 4000000));
     }
 
     @Test

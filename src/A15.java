@@ -55,6 +55,19 @@ public class A15
         return correct;
     }
 
+    public static Point findPointNotTaken(List<Sensor> sensors, int maxRange)
+    {
+        for (int y = 0; y < maxRange; y++) {
+            for (int x = 0; x < maxRange; x++) {
+                var point = new Point(x,y);
+                if (sensors.stream().noneMatch(s -> s.isInRange(point))){
+                    return point;
+                }
+            }
+        }
+        return new Point(0, 0);
+    }
+
     static List<Sensor> loadSensors(File file) throws IOException {
         List<String> lines = Files.readAllLines(file.toPath());
         var lst = new ArrayList<Sensor>();
