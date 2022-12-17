@@ -4,9 +4,9 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class A14Test {
+class A14BTest {
 
     @Test
     void parsePoints() throws IOException {
@@ -25,14 +25,14 @@ class A14Test {
     @Test
     void markPositions() throws IOException {
         var board = new char[5][5];
-        A14.markPoints(new Point(1, 0), new Point(1, 1), board);
+        A14B.markPoints(new Point(1, 0), new Point(1, 1), board);
         assertEquals('#', board[0][1]);
         assertEquals('#', board[1][1]);
     }
 
     @Test
     void trickleBoard() throws IOException {
-        var board = A14.parseBoard(new File("a14.test.txt"));
+        var board = A14B.parseBoard(new File("a14.test.txt"));
         assertEquals(new Point(500, 1), A14.trickleDown(board, new Point(500, 0)));
         assertEquals(new Point(501, 4), A14.trickleDown(board, new Point(502, 3)));
         assertEquals(new Point(500, 8), A14.trickleDown(board, new Point(500, 8)));
@@ -47,14 +47,14 @@ class A14Test {
 
     @Test
     void findSolution() throws IOException {
-        var board = A14.parseBoard(new File("a14.test.txt"));
-        var score = A14.calculate(board);
-        assertEquals(24, score);
+        var board = A14B.parseBoard(new File("a14.test.txt"));
+        var score = A14B.calculate(board);
+        assertEquals(93, score);
     }
     @Test
     void findFullSolution() throws IOException {
-        var board = A14.parseBoard(new File("a14.full.txt"));
-        var score = A14.calculate(board);
-        assertEquals(24, score);
+        var board = A14B.parseBoard(new File("a14.full.txt"));
+        var score = A14B.calculate(board);
+        assertEquals(22499, score);
     }
 }
