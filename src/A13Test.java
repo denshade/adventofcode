@@ -13,6 +13,11 @@ class A13Test
     }
     @Test
     void checkLoadsFull() throws IOException {
-        assertEquals(13, A13.calculateIndices(new File("a13.full.txt")));
+        assertEquals(13, A13.getIndices(new File("a13.full.txt")));
     }
+    @Test
+    void checkLoadsFullSum() throws IOException {
+        assertEquals(5450, A13.calculateIndices(new File("a13.full.txt")));
+    }
+
 }

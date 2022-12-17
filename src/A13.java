@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,8 +15,8 @@ public class A13
         RIGHT, INCORRECT, INCONCLUSIVE
     };
 
-    public static Set<Integer> getIndices(File file) throws IOException {
-        var indices = new HashSet<Integer>();
+    public static List<Integer> getIndices(File file) throws IOException {
+        var indices = new ArrayList<Integer>();
         List<String> lines = Files.readAllLines(file.toPath());
         for (int l = 0; l < lines.size(); l+=3) {
             JSONArray left = new JSONArray(lines.get(l));
@@ -29,17 +30,8 @@ public class A13
     }
 
     public static int calculateIndices(File file) throws IOException {
-        List<String> lines = Files.readAllLines(file.toPath());
-        int sum = 0;
-        for (int l = 0; l < lines.size(); l+=3) {
-            JSONArray left = new JSONArray(lines.get(l));
-            JSONArray right = new JSONArray(lines.get(l + 1));
-            if (recursiveDiff(left, right) == Order.RIGHT || recursiveDiff(left, right) == Order.INCONCLUSIVE)
-            {
-                sum+= (l / 3) + 1;
-            }
-        }
-        return sum;
+        var indices = getIndices(file);
+        return indices.stream().mapToInt(l->l).sum();
     }
 
     private static Order recursiveDiff(JSONArray left, JSONArray right) {
