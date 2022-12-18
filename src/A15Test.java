@@ -23,7 +23,7 @@ class A15Test
     }
     @Test
     void findUncoveredPaintTest() throws IOException {
-        assertEquals(new Point(14, 11), A15.findAtEdge(A15.loadSensors(new File("a15.full.txt")), 4000000));
+        assertEquals(new Point(14, 11), A15.findAtEdge(A15.loadSensors(new File("a15.test.txt")), 20));
     }
 
     @Test
