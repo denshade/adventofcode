@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class A15
 {
@@ -22,6 +23,33 @@ public class A15
         public boolean isInRange(Point position)
         {
             return calculate(location, position) <= distanceToBeacon;
+        }
+
+        public List<Point> getEdgePoints(int max)
+        {
+            var list = new ArrayList<Point>();
+            for (int y = 0; y <= distanceToBeacon; y++) {
+                for (int x = 0; x <= distanceToBeacon; x++) {
+                    Point p2 = new Point(location.x - x, location.y - y);
+                    if (calculate(location, p2) == distanceToBeacon + 1) {
+                        list.add(p2);
+                    }
+                    Point p1 = new Point(location.x + x, location.y - y);
+                    if (calculate(location, p1) == distanceToBeacon + 1) {
+                        list.add(p1);
+                    }
+                    Point p3 = new Point(location.x - x, location.y + y);
+                    if (calculate(location, p1) == distanceToBeacon + 1) {
+                        list.add(p3);
+                    }
+                    Point p4 = new Point(location.x + x, location.y + y);
+                    if (calculate(location, p4) == distanceToBeacon + 1) {
+                        list.add(p4);
+                    }
+
+                }
+            }
+            return list.stream().filter(e -> e.y < max && e.y > -1 && e.x < max && e.x > -1).collect(Collectors.toList());
         }
     }
     public static long calculate(Point p1, Point p2) {
@@ -55,9 +83,24 @@ public class A15
         return correct;
     }
 
+    public static Point findAtEdge(List<Sensor> sensors, int maxRange)
+    {
+        for (Sensor sensor : sensors) {
+            var points = sensor.getEdgePoints(maxRange);
+            for (var point: points)
+            {
+                if (sensors.stream().noneMatch(s -> s.isInRange(point))){
+                    return point;
+                }
+            }
+        }
+        return new Point(0,0);
+    }
+
     public static Point findPointNotTaken(List<Sensor> sensors, int maxRange)
     {
         for (int y = 0; y < maxRange; y++) {
+            System.out.println(y);
             for (int x = 0; x < maxRange; x++) {
                 var point = new Point(x,y);
                 if (sensors.stream().noneMatch(s -> s.isInRange(point))){
