@@ -29,7 +29,9 @@ public class A15
         {
             var list = new ArrayList<Point>();
             for (int y = 0; y <= distanceToBeacon; y++) {
-                for (int x = 0; x <= distanceToBeacon; x++) {
+                System.out.println(y);
+                for (int x = (int) (distanceToBeacon - y); x <= distanceToBeacon; x++) {
+                    if (y + x < distanceToBeacon) continue;
                     Point p2 = new Point(location.x - x, location.y - y);
                     if (calculate(location, p2) == distanceToBeacon + 1) {
                         list.add(p2);

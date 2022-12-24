@@ -25,6 +25,10 @@ class A15Test
     void findUncoveredPaintTest() throws IOException {
         assertEquals(new Point(14, 11), A15.findAtEdge(A15.loadSensors(new File("a15.test.txt")), 20));
     }
+    @Test
+    void findUncoveredPaintFull() throws IOException {
+        assertEquals(new Point(14, 11), A15.findAtEdge(A15.loadSensors(new File("a15.full.txt")), 4000000));
+    }
 
     @Test
     void findUncoveredFullTest() throws IOException {
@@ -39,7 +43,7 @@ class A15Test
     @Test
     void loadPointsAtEdge() {
         var sensor = new A15.Sensor(new Point(50,0), new Point(60,0));
-        assertEquals(40, sensor.getEdgePoints(100).size());
+        assertEquals(20, sensor.getEdgePoints(100).size());
     }
 
 }
