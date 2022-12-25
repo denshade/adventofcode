@@ -45,7 +45,7 @@ public class A16
         public Valve currentValve;
         public List<Valve> allValves;
         public long totalRate = 0;
-        public long nrTicks = 0;
+        public int nrTicks = 0;
 
         public ValveSystem(Valve currentValve, List<Valve> otherValves) {
             this.currentValve = currentValve;
@@ -79,6 +79,15 @@ public class A16
             newValveSystem.currentValve.open = true;
             newValveSystem.totalRate += newValveSystem.currentValve.rate * (NR_MINUTES - newValveSystem.nrTicks);
             return newValveSystem;
+        }
+        public long getOptimistic()
+        {
+            var toOpenValves = allValves.stream().filter(e->!e.open).mapToLong(e ->e.rate).sorted().boxed().toList();
+            long nrs = 0;
+            for (int tick = nrTicks+1; tick <= NR_MINUTES; tick++) {
+                nrs += toOpenValves.get(toOpenValves.size() - tick) * (NR_MINUTES - tick);
+            }
+            return nrs;
         }
 
         public long getHeuristic()
