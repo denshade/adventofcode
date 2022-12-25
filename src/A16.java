@@ -2,9 +2,12 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class A16
 {
+    private static int NR_MINUTES = 30;
     public static class Valve {
         String name;
         int rate;
@@ -21,7 +24,7 @@ public class A16
         systems.add(sys);
         while(systems.size() > 0) {
             var currentSys = systems.poll();
-            if (currentSys.nrTicks == 30) {
+            if (currentSys.nrTicks == NR_MINUTES) {
                 if (currentSys.totalRate > bestSolutionScore) {
                     bestSolutionScore = currentSys.totalRate;
                     System.out.println(bestSolutionScore);
@@ -59,7 +62,6 @@ public class A16
         {
             var newValveSystem = new ValveSystem(this);
             newValveSystem.nrTicks++;
-            newValveSystem.totalRate += newValveSystem.allValves.stream().filter(v -> v.open).mapToLong(v -> v.rate).sum();
             return newValveSystem;
         }
 
@@ -75,12 +77,18 @@ public class A16
         {
             var newValveSystem = new ValveSystem(this);
             newValveSystem.currentValve.open = true;
+            newValveSystem.totalRate += newValveSystem.currentValve.rate * (NR_MINUTES - newValveSystem.nrTicks);
             return newValveSystem;
+        }
+
+        public long getHeuristic()
+        {
+            return totalRate;
         }
 
         @Override
         public int compareTo(ValveSystem o) {
-            return (int)(-1*this.totalRate) - (int)(-1*o.totalRate);
+            return (int)(-1*getHeuristic()) - (int)(-1*o.getHeuristic());
         }
     }
     public static long calculate(File file) throws IOException {
