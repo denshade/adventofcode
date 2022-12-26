@@ -31,10 +31,15 @@ public class A16
                 }
             }
             if (!currentSys.currentValve.open) {
-                systems.add(currentSys.openValve().tick());
+                if (currentSys.getHeuristic() > 900) {
+                    systems.add(currentSys.openValve().tick());
+                }
             }
             for (var availableValves : currentSys.currentValve.valves) {
-                systems.add(currentSys.gotoValve(availableValves).tick());
+                if (currentSys.getHeuristic() > 900) {
+                    systems.add(currentSys.gotoValve(availableValves).tick());
+                }
+
             }
         }
         return sys;
@@ -82,17 +87,24 @@ public class A16
         }
         public long getOptimistic()
         {
-            var toOpenValves = allValves.stream().filter(e->!e.open).mapToLong(e ->e.rate).sorted().boxed().toList();
+            if (allValves.stream().filter(e->!e.open).count() == 0) {
+                return 0;
+            }
+            var toOpenValves = allValves.stream().filter(e->!e.open).mapToLong(e ->e.rate).sorted().boxed().collect(Collectors.toList());
             long nrs = 0;
+            var loopBack = 0;
             for (int tick = nrTicks+1; tick <= NR_MINUTES; tick++) {
-                nrs += toOpenValves.get(toOpenValves.size() - tick) * (NR_MINUTES - tick);
+                if (toOpenValves.size() - tick - nrTicks < 0) break;
+                var ticksLeft = NR_MINUTES - tick;
+                Long aLong = toOpenValves.get(toOpenValves.size() - ++loopBack);
+                nrs += aLong * (ticksLeft);
             }
             return nrs;
         }
 
         public long getHeuristic()
         {
-            return totalRate;
+            return totalRate + getOptimistic();
         }
 
         @Override
