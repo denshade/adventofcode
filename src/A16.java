@@ -17,35 +17,12 @@ public class A16
 
     public static ValveSystem calculate(List<Valve> valves)
     {
-        long bestSolutionScore = 0;
-
+        var el = new OptimismElimination();
         var sys = new ValveSystem(valves.get(0), valves);
-        PriorityQueue<ValveSystem> systems = new PriorityQueue<>();
-        systems.add(sys);
-        while(systems.size() > 0) {
-            var currentSys = systems.poll();
-            if (currentSys.nrTicks == NR_MINUTES) {
-                if (currentSys.totalRate > bestSolutionScore) {
-                    bestSolutionScore = currentSys.totalRate;
-                    System.out.println(bestSolutionScore);
-                }
-            }
-            if (!currentSys.currentValve.open) {
-                if (currentSys.getHeuristic() > 900) {
-                    systems.add(currentSys.openValve().tick());
-                }
-            }
-            for (var availableValves : currentSys.currentValve.valves) {
-                if (currentSys.getHeuristic() > 900) {
-                    systems.add(currentSys.gotoValve(availableValves).tick());
-                }
-
-            }
-        }
-        return sys;
+        return (ValveSystem) el.calculate(sys);
     }
 
-    public static class ValveSystem implements Comparable<ValveSystem>
+    public static class ValveSystem implements OptimismElimination.Solution
     {
         public Valve currentValve;
         public List<Valve> allValves;
@@ -85,6 +62,12 @@ public class A16
             newValveSystem.totalRate += newValveSystem.currentValve.rate * (NR_MINUTES - newValveSystem.nrTicks);
             return newValveSystem;
         }
+
+        @Override
+        public long getActual() {
+            return totalRate;
+        }
+
         public long getOptimistic()
         {
             if (allValves.stream().filter(e->!e.open).count() == 0) {
@@ -102,15 +85,46 @@ public class A16
             return nrs;
         }
 
-        public long getHeuristic()
-        {
-            return totalRate + getOptimistic();
+        @Override
+        public OptimismElimination.Solution getBestGreedyWalk() {
+            var valveSystem = new ValveSystem(this);
+            while(valveSystem.nrTicks < NR_MINUTES) {
+                if (!valveSystem.currentValve.open) {
+                    valveSystem = valveSystem.openValve().tick();
+                } else {
+                    var openValves = valveSystem.allValves.stream().filter(e -> !e.open).collect(Collectors.toList());
+                    if (!openValves.isEmpty()) {
+                        valveSystem = valveSystem.gotoValve(openValves.get(openValves.size() - 1)).tick();
+                    } else {
+                        valveSystem = valveSystem.tick();
+                    }
+                }
+            }
+            return valveSystem;
         }
 
         @Override
-        public int compareTo(ValveSystem o) {
-            return (int)(-1*getHeuristic()) - (int)(-1*o.getHeuristic());
+        public List<OptimismElimination.Solution> getOneStepFurther() {
+            var systems = new ArrayList<OptimismElimination.Solution>();
+            var currentSys = this;
+            if (!currentSys.currentValve.open) {
+                systems.add(currentSys.openValve().tick());
+            }
+            for (var availableValves : currentSys.currentValve.valves) {
+                systems.add(currentSys.gotoValve(availableValves).tick());
+            }
+            return systems;
         }
+
+        @Override
+        public OptimismElimination.Solution clone() {
+            return new ValveSystem(this);
+        }
+
+        public int compareTo(OptimismElimination.Solution o) {
+            return (int)(-1*(getOptimistic() + totalRate)) - (int)(-1*(o.getOptimistic()+o.getActual()));
+        }
+
     }
     public static long calculate(File file) throws IOException {
         var valves = loadValves(file);

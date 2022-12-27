@@ -9,6 +9,7 @@ public class OptimismElimination
         long getOptimistic();
         Solution getBestGreedyWalk();
         List<Solution> getOneStepFurther();
+        Solution clone();
     }
 
     public Solution calculate(Solution initial)
@@ -19,10 +20,11 @@ public class OptimismElimination
         toProcessQueue.add(initial);
         while (toProcessQueue.size() > 0) {
             var currentSolution = toProcessQueue.poll();
-            var bestCandidate = currentSolution.getBestGreedyWalk().getActual();
+            Solution bestGreedyWalk = currentSolution.getBestGreedyWalk();
+            var bestCandidate = bestGreedyWalk.getActual();
             if (bestCandidate > bestActual) {
                 bestActual = bestCandidate;
-                bestSolution = currentSolution.getBestGreedyWalk();
+                bestSolution = bestGreedyWalk.clone();
                 toProcessQueue = filterPriorityOnActual(toProcessQueue, bestActual);
             }
             long finalBestActual = bestActual;
