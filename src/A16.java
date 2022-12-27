@@ -8,11 +8,27 @@ import java.util.stream.Stream;
 public class A16
 {
     private static int NR_MINUTES = 30;
-    public static class Valve {
+    public static class Valve implements Comparable<Valve>{
         String name;
         int rate;
         boolean open = false;
         List<Valve> valves = new ArrayList<>();
+
+        Valve()
+        {
+
+        }
+        Valve(Valve valve) {
+            this.name = valve.name;
+            this.rate = valve.rate;
+            this.open = valve.open;
+            this.valves = valve.valves;
+        }
+
+        @Override
+        public int compareTo(Valve o) {
+            return this.rate - o.rate;
+        }
     }
 
     public static ValveSystem calculate(List<Valve> valves)
@@ -34,8 +50,8 @@ public class A16
             this.allValves = otherValves;
         }
         public ValveSystem(ValveSystem system) {
-            this.currentValve = system.currentValve;
-            this.allValves = system.allValves;
+            this.currentValve = new Valve(system.currentValve);
+            this.allValves = system.allValves.stream().map(Valve::new).collect(Collectors.toList());
             this.totalRate = system.totalRate;
             this.nrTicks = system.nrTicks;
         }
@@ -91,10 +107,12 @@ public class A16
             while(valveSystem.nrTicks < NR_MINUTES) {
                 if (!valveSystem.currentValve.open) {
                     valveSystem = valveSystem.openValve().tick();
+                    System.out.println("Opened valve " + valveSystem.currentValve.name);
                 } else {
-                    var openValves = valveSystem.allValves.stream().filter(e -> !e.open).collect(Collectors.toList());
+                    var openValves = valveSystem.currentValve.valves.stream().filter(e -> !e.open).collect(Collectors.toList());
+                    openValves.sort(Collections.reverseOrder());
                     if (!openValves.isEmpty()) {
-                        valveSystem = valveSystem.gotoValve(openValves.get(openValves.size() - 1)).tick();
+                        valveSystem = valveSystem.gotoValve(openValves.get(0)).tick();
                     } else {
                         valveSystem = valveSystem.tick();
                     }

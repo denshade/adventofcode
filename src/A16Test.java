@@ -2,6 +2,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -17,7 +18,13 @@ class A16Test {
 
     @Test
     void checkSolutionSys() throws IOException {
-        assertEquals(1651, A16.calculate(A16.loadValves(new File("a16.test.txt"))).totalRate);
+        assertEquals(2534, A16.calculate(A16.loadValves(new File("a16.test.txt"))).totalRate);
+    }
+    @Test
+    void checkSolutionFirstStepSys() throws IOException {
+        List<A16.Valve> valves = A16.loadValves(new File("a16.test.txt"));
+        var sys = new A16.ValveSystem(valves.get(0), valves);
+        assertEquals(1651, sys.getOneStepFurther().get(0).getOptimistic());
     }
 
     @Test
