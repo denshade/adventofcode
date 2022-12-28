@@ -11,7 +11,6 @@ public class A16
     public static class Valve implements Comparable<Valve>{
         String name;
         int rate;
-        boolean open = false;
         List<Valve> valves = new ArrayList<>();
 
         Valve()
@@ -21,7 +20,6 @@ public class A16
         Valve(Valve valve) {
             this.name = valve.name;
             this.rate = valve.rate;
-            this.open = valve.open;
             this.valves = valve.valves;
         }
 
@@ -41,6 +39,7 @@ public class A16
     public static class ValveSystem implements OptimismElimination.Solution
     {
         public Valve currentValve;
+        Map<Valve,Integer> openValveToTickTimes = new HashMap<>();
         public List<Valve> allValves;
         public long totalRate = 0;
         public int nrTicks = 0;
@@ -74,8 +73,8 @@ public class A16
         public ValveSystem openValve()
         {
             var newValveSystem = new ValveSystem(this);
-            newValveSystem.currentValve.open = true;
-            newValveSystem.totalRate += newValveSystem.currentValve.rate * (NR_MINUTES - newValveSystem.nrTicks);
+            newValveSystem.openValveToTickTimes.put(newValveSystem.currentValve, newValveSystem.nrTicks);
+            //TODO newValveSystem.totalRate += newValveSystem.currentValve.rate * (NR_MINUTES - newValveSystem.nrTicks);
             return newValveSystem;
         }
 
@@ -86,30 +85,41 @@ public class A16
 
         public long getOptimistic()
         {
-            if (allValves.stream().filter(e->!e.open).count() == 0) {
+            ArrayList<Valve> allClosedValves = getAllClosedValves();
+            if (allClosedValves.size() == 0) {
                 return 0;
             }
-            var toOpenValves = allValves.stream().filter(e->!e.open).mapToLong(e ->e.rate).sorted().boxed().collect(Collectors.toList());
+            var allClosedValvesValues = allClosedValves.stream().map(e->e.rate).sorted().collect(Collectors.toList());
             long nrs = 0;
             var loopBack = 0;
             for (int tick = nrTicks+1; tick <= NR_MINUTES; tick++) {
-                if (toOpenValves.size() - tick - nrTicks < 0) break;
+                if (allClosedValves.size() - tick - nrTicks < 0) break;
                 var ticksLeft = NR_MINUTES - tick;
-                Long aLong = toOpenValves.get(toOpenValves.size() - ++loopBack);
-                nrs += aLong * (ticksLeft);
+                int aLong = allClosedValvesValues.get(allClosedValvesValues.size() - ++loopBack);
+                nrs += (long) aLong * (ticksLeft);
             }
             return nrs;
+        }
+        public boolean isCurrentValveOpen()
+        {
+            return openValveToTickTimes.containsKey(currentValve);
+        }
+
+        private ArrayList<Valve> getAllClosedValves() {
+            var allClosedValves = new ArrayList<>(allValves);
+            allClosedValves.removeAll(openValveToTickTimes.keySet());
+            return allClosedValves;
         }
 
         @Override
         public OptimismElimination.Solution getBestGreedyWalk() {
             var valveSystem = new ValveSystem(this);
             while(valveSystem.nrTicks < NR_MINUTES) {
-                if (!valveSystem.currentValve.open) {
+                if (!valveSystem.isCurrentValveOpen()) {
                     valveSystem = valveSystem.openValve().tick();
                     System.out.println("Opened valve " + valveSystem.currentValve.name);
                 } else {
-                    var openValves = valveSystem.currentValve.valves.stream().filter(e -> !e.open).collect(Collectors.toList());
+                    var openValves = new ArrayList<>(valveSystem.openValveToTickTimes.keySet());
                     openValves.sort(Collections.reverseOrder());
                     if (!openValves.isEmpty()) {
                         valveSystem = valveSystem.gotoValve(openValves.get(0)).tick();
@@ -125,7 +135,7 @@ public class A16
         public List<OptimismElimination.Solution> getOneStepFurther() {
             var systems = new ArrayList<OptimismElimination.Solution>();
             var currentSys = this;
-            if (!currentSys.currentValve.open) {
+            if (!currentSys.isCurrentValveOpen()) {
                 systems.add(currentSys.openValve().tick());
             }
             for (var availableValves : currentSys.currentValve.valves) {
