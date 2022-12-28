@@ -27,6 +27,10 @@ public class A16
         public int compareTo(Valve o) {
             return this.rate - o.rate;
         }
+        public String toString()
+        {
+            return this.name;
+        }
     }
 
     public static ValveSystem calculate(List<Valve> valves)
@@ -49,9 +53,10 @@ public class A16
             this.allValves = otherValves;
         }
         public ValveSystem(ValveSystem system) {
-            this.currentValve = new Valve(system.currentValve);
-            this.allValves = system.allValves.stream().map(Valve::new).collect(Collectors.toList());
+            this.currentValve = system.currentValve;
+            this.allValves = system.allValves;
             this.totalRate = system.totalRate;
+            this.openValveToTickTimes = new HashMap<>(system.openValveToTickTimes);
             this.nrTicks = system.nrTicks;
         }
 
@@ -74,13 +79,12 @@ public class A16
         {
             var newValveSystem = new ValveSystem(this);
             newValveSystem.openValveToTickTimes.put(newValveSystem.currentValve, newValveSystem.nrTicks);
-            //TODO newValveSystem.totalRate += newValveSystem.currentValve.rate * (NR_MINUTES - newValveSystem.nrTicks);
             return newValveSystem;
         }
 
         @Override
         public long getActual() {
-            return totalRate;
+            return openValveToTickTimes.entrySet().stream().mapToLong(e -> (long) e.getKey().rate * (NR_MINUTES - e.getValue())).sum();
         }
 
         public long getOptimistic()
@@ -119,10 +123,12 @@ public class A16
                     valveSystem = valveSystem.openValve().tick();
                     System.out.println("Opened valve " + valveSystem.currentValve.name);
                 } else {
-                    var openValves = new ArrayList<>(valveSystem.openValveToTickTimes.keySet());
-                    openValves.sort(Collections.reverseOrder());
-                    if (!openValves.isEmpty()) {
-                        valveSystem = valveSystem.gotoValve(openValves.get(0)).tick();
+                    var closedValves = valveSystem.currentValve.valves;
+                    closedValves.removeAll(valveSystem.openValveToTickTimes.keySet());
+                    closedValves.sort(Collections.reverseOrder());
+                    if (!closedValves.isEmpty()) {
+                        System.out.println("Goto valve " + closedValves.get(0));
+                        valveSystem = valveSystem.gotoValve(closedValves.get(0)).tick();
                     } else {
                         valveSystem = valveSystem.tick();
                     }

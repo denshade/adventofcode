@@ -18,7 +18,7 @@ class A16Test {
 
     @Test
     void checkSolutionSys() throws IOException {
-        assertEquals(2534, A16.calculate(A16.loadValves(new File("a16.test.txt"))).totalRate);
+        assertEquals(1651, A16.calculate(A16.loadValves(new File("a16.test.txt"))).getActual());
     }
     @Test
     void checkSolutionFirstStepSys() throws IOException {
