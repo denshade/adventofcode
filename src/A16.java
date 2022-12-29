@@ -17,11 +17,6 @@ public class A16
         {
 
         }
-        Valve(Valve valve) {
-            this.name = valve.name;
-            this.rate = valve.rate;
-            this.valves = valve.valves;
-        }
 
         @Override
         public int compareTo(Valve o) {
@@ -45,7 +40,6 @@ public class A16
         public Valve currentValve;
         Map<Valve,Integer> openValveToTickTimes = new HashMap<>();
         public List<Valve> allValves;
-        public long totalRate = 0;
         public int nrTicks = 0;
 
         public ValveSystem(Valve currentValve, List<Valve> otherValves) {
@@ -55,7 +49,6 @@ public class A16
         public ValveSystem(ValveSystem system) {
             this.currentValve = system.currentValve;
             this.allValves = system.allValves;
-            this.totalRate = system.totalRate;
             this.openValveToTickTimes = new HashMap<>(system.openValveToTickTimes);
             this.nrTicks = system.nrTicks;
         }
@@ -115,11 +108,16 @@ public class A16
             return allClosedValves;
         }
 
+        public String toString()
+        {
+            return openValveToTickTimes.toString();
+        }
+
         @Override
         public OptimismElimination.Solution getBestGreedyWalk() {
             var valveSystem = new ValveSystem(this);
             while(valveSystem.nrTicks < NR_MINUTES) {
-                if (!valveSystem.isCurrentValveOpen()) {
+                if (!valveSystem.isCurrentValveOpen() && valveSystem.currentValve.rate != 0) {
                     valveSystem = valveSystem.openValve().tick();
                     System.out.println("Opened valve " + valveSystem.currentValve.name);
                 } else {
@@ -156,13 +154,13 @@ public class A16
         }
 
         public int compareTo(OptimismElimination.Solution o) {
-            return (int)(-1*(getOptimistic() + totalRate)) - (int)(-1*(o.getOptimistic()+o.getActual()));
+            return (int)(-1*(getOptimistic() + getActual())) - (int)(-1*(o.getOptimistic()+o.getActual()));
         }
 
     }
     public static long calculate(File file) throws IOException {
         var valves = loadValves(file);
-        return calculate(valves).totalRate;
+        return calculate(valves).getActual();
     }
 
     public static List<Valve> loadValves(File file) throws IOException {

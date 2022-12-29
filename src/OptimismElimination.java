@@ -20,7 +20,9 @@ public class OptimismElimination
         toProcessQueue.add(initial);
         while (toProcessQueue.size() > 0) {
             var currentSolution = toProcessQueue.poll();
+            System.out.println(currentSolution);
             Solution bestGreedyWalk = currentSolution.getBestGreedyWalk();
+            System.out.println("====");
             var bestCandidate = bestGreedyWalk.getActual();
             if (bestCandidate > bestActual) {
                 bestActual = bestCandidate;
