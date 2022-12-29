@@ -22,6 +22,9 @@ public class OptimismElimination
             var currentSolution = toProcessQueue.poll();
             System.out.println(currentSolution);
             Solution bestGreedyWalk = currentSolution.getBestGreedyWalk();
+            if (currentSolution.toString().equals("@BB {BB=5, DD=2}")) {
+                System.out.println("HELLO");
+            }
             System.out.println(bestGreedyWalk.getActual());
             System.out.println("====");
             var bestCandidate = bestGreedyWalk.getActual();
@@ -39,6 +42,7 @@ public class OptimismElimination
     }
 
     private PriorityQueue<Solution> filterPriorityOnActual(PriorityQueue<Solution> toProcessQueue, long bestActual) {
+        System.out.println("Removing:" + toProcessQueue.stream().filter(s -> s.getOptimistic() < bestActual).map(Object::toString).collect(Collectors.toList()));
         return toProcessQueue.stream().filter(s -> s.getOptimistic() >= bestActual).collect(Collectors.toCollection(PriorityQueue::new));
     }
 }

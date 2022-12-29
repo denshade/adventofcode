@@ -35,6 +35,15 @@ class A16Test {
         assertEquals(1, v.nrTicks);
     }
     @Test
+    void checkExampleValveMap() throws IOException {
+        var valves = getTestValves();
+        var map = new HashMap<String, A16.Valve>();
+        for (A16.Valve valve : valves) {
+            map.put(valve.name, valve);
+        }
+        assertEquals(2, map.get("BB").valves.size());
+    }
+    @Test
     void checkExampleValveScore() throws IOException {
         var valves = getTestValves();
         var map = new HashMap<String, A16.Valve>();
@@ -76,6 +85,29 @@ class A16Test {
                 ;
         assertEquals(30, v.nrTicks);
         assertEquals(1651, v.getActual());
+
+    }
+    @Test
+    void checkExampleValveOptimistic() throws IOException {
+        var valves = getTestValves();
+        var map = new HashMap<String, A16.Valve>();
+        for (A16.Valve valve : valves) {
+            map.put(valve.name, valve);
+        }
+        var v = new A16.
+                ValveSystem(map.get("AA"), valves)
+                .gotoAndTick(map.get("DD"))
+                .openAndTick()
+                .gotoAndTick(map.get("CC"))
+                .gotoAndTick(map.get("BB"))
+                .openAndTick()
+                .gotoAndTick(map.get("AA"))
+                .gotoAndTick(map.get("II"))
+                .gotoAndTick(map.get("JJ"))
+                .openAndTick()
+
+                ;
+        assertTrue(v.getOptimistic()> 1500);
 
     }
 }

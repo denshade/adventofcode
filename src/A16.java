@@ -88,16 +88,15 @@ public class A16
             if (allClosedValves.size() == 0) {
                 return 0;
             }
-            var allClosedValvesValues = allClosedValves.stream().map(e->e.rate).sorted().collect(Collectors.toList());
+            var allClosedValvesValues = allClosedValves.stream().map(e -> e.rate * -1).collect(Collectors.toCollection(PriorityQueue::new));
             long nrs = 0;
-            var loopBack = 0;
             for (int tick = nrTicks+1; tick <= NR_MINUTES; tick++) {
-                if (allClosedValves.size() - tick - nrTicks < 0) break;
+                if (allClosedValvesValues.size() == 0) break;
                 var ticksLeft = NR_MINUTES - tick;
-                int aLong = allClosedValvesValues.get(allClosedValvesValues.size() - ++loopBack);
-                nrs += (long) aLong * (ticksLeft);
+                int bestRate = allClosedValvesValues.poll() * -1;
+                nrs += (long) bestRate * (ticksLeft);
             }
-            return nrs;
+            return nrs + getActual();
         }
         public boolean isCurrentValveOpen()
         {
@@ -112,7 +111,7 @@ public class A16
 
         public String toString()
         {
-            return openValveToTickTimes.toString();
+            return "@" + currentValve + " " + openValveToTickTimes.toString();
         }
 
         @Override
@@ -123,7 +122,7 @@ public class A16
                     valveSystem = valveSystem.openValve().tick();
                     System.out.println("Opened valve " + valveSystem.currentValve.name);
                 } else {
-                    var closedValves = valveSystem.currentValve.valves;
+                    var closedValves = new ArrayList<>(valveSystem.currentValve.valves);
                     closedValves.removeAll(valveSystem.openValveToTickTimes.keySet());
                     closedValves.sort(Collections.reverseOrder());
                     if (!closedValves.isEmpty()) {
@@ -156,7 +155,7 @@ public class A16
         }
 
         public int compareTo(OptimismElimination.Solution o) {
-            return (int)(-1*(getOptimistic() + getActual())) - (int)(-1*(o.getOptimistic()+o.getActual()));
+            return (int)(-1*(getOptimistic())) - (int)(-1*(o.getOptimistic()));
         }
 
     }
