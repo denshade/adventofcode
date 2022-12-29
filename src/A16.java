@@ -55,7 +55,14 @@ public class A16
             return newValveSystem;
         }
 
-
+        public ValveSystem openAndTick()
+        {
+            return openValve().tick();
+        }
+        public ValveSystem gotoAndTick(Valve valve)
+        {
+            return gotoValve(valve).tick();
+        }
         public ValveSystem gotoValve(Valve valve)
         {
             var newValveSystem = new ValveSystem(this);
@@ -135,10 +142,10 @@ public class A16
             var systems = new ArrayList<OptimismElimination.Solution>();
             var currentSys = this;
             if (!currentSys.isCurrentValveOpen()) {
-                systems.add(currentSys.openValve().tick());
+                systems.add(currentSys.openAndTick());
             }
             for (var availableValves : currentSys.currentValve.valves) {
-                systems.add(currentSys.gotoValve(availableValves).tick());
+                systems.add(currentSys.gotoAndTick(availableValves));
             }
             return systems;
         }

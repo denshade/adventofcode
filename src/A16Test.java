@@ -10,59 +10,63 @@ import static org.junit.jupiter.api.Assertions.*;
 class A16Test {
     @Test
     void loadVals() throws IOException {
-        assertEquals(10, A16.loadValves(new File("a16.test.txt")).size());
+        assertEquals(10, getTestValves().size());
+    }
+
+    private List<A16.Valve> getTestValves() throws IOException {
+        return A16.loadValves(new File("a16.test.txt"));
     }
 
     @Test
     void checkSolutionSys() throws IOException {
-        assertEquals(1651, A16.calculate(A16.loadValves(new File("a16.test.txt"))).getActual());
+        assertEquals(1651, A16.calculate(getTestValves()).getActual());
     }
     @Test
     void checkSolutionFirstStepSys() throws IOException {
-        List<A16.Valve> valves = A16.loadValves(new File("a16.test.txt"));
+        List<A16.Valve> valves = getTestValves();
         var sys = new A16.ValveSystem(valves.get(0), valves);
         assertEquals(2146, sys.getOneStepFurther().get(0).getOptimistic());
     }
 
     @Test
     void checkValveOpened() throws IOException {
-        var valves = A16.loadValves(new File("a16.test.txt"));
+        var valves = getTestValves();
         var v = new A16.ValveSystem(valves.get(0), valves).gotoValve(valves.get(1)).openValve().tick();
         assertEquals(1, v.nrTicks);
     }
     @Test
     void checkExampleValveScore() throws IOException {
-        var valves = A16.loadValves(new File("a16.test.txt"));
+        var valves = getTestValves();
         var map = new HashMap<String, A16.Valve>();
         for (A16.Valve valve: valves) {
             map.put(valve.name, valve);
         }
         var v = new A16.
                 ValveSystem(map.get("AA"), valves)
-                .gotoValve(map.get("DD")).tick()
-                .openValve().tick()
-                .gotoValve(map.get("CC")).tick()
-                .gotoValve(map.get("BB")).tick()
-                .openValve().tick()
-                .gotoValve(map.get("AA")).tick()
-                .gotoValve(map.get("II")).tick()
-                .gotoValve(map.get("JJ")).tick()
-                .openValve().tick()
-                .gotoValve(map.get("II")).tick()
-                .gotoValve(map.get("AA")).tick()
-                .gotoValve(map.get("DD")).tick()
-                .gotoValve(map.get("EE")).tick()
-                .gotoValve(map.get("FF")).tick()
-                .gotoValve(map.get("GG")).tick()
-                .gotoValve(map.get("HH")).tick()//16
-                .openValve().tick()//17
-                .gotoValve(map.get("GG")).tick()//18
-                .gotoValve(map.get("FF")).tick()//19
-                .gotoValve(map.get("EE")).tick()//20
-                .openValve().tick()//21
-                .gotoValve(map.get("DD")).tick()//22
-                .gotoValve(map.get("CC")).tick()//23
-                .openValve().tick()//24
+                .gotoAndTick(map.get("DD"))
+                .openAndTick()
+                .gotoAndTick(map.get("CC"))
+                .gotoAndTick(map.get("BB"))
+                .openAndTick()
+                .gotoAndTick(map.get("AA"))
+                .gotoAndTick(map.get("II"))
+                .gotoAndTick(map.get("JJ"))
+                .openAndTick()
+                .gotoAndTick(map.get("II"))
+                .gotoAndTick(map.get("AA"))
+                .gotoAndTick(map.get("DD"))
+                .gotoAndTick(map.get("EE"))
+                .gotoAndTick(map.get("FF"))
+                .gotoAndTick(map.get("GG"))
+                .gotoAndTick(map.get("HH"))//16
+                .openAndTick()//17
+                .gotoAndTick(map.get("GG"))//18
+                .gotoAndTick(map.get("FF"))//19
+                .gotoAndTick(map.get("EE"))//20
+                .openAndTick()//21
+                .gotoAndTick(map.get("DD"))//22
+                .gotoAndTick(map.get("CC"))//23
+                .openAndTick()//24
                 .tick()//25
                 .tick()//26
                 .tick()//27
