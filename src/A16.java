@@ -90,7 +90,8 @@ public class A16
             }
             var allClosedValvesValues = allClosedValves.stream().map(e -> e.rate * -1).collect(Collectors.toCollection(PriorityQueue::new));
             long nrs = 0;
-            for (int tick = nrTicks+1; tick <= NR_MINUTES; tick++) {
+            for (int tick = nrTicks+1; tick <= NR_MINUTES; tick += 2)//open and move takes 2 ticks
+            {
                 if (allClosedValvesValues.size() == 0) break;
                 var ticksLeft = NR_MINUTES - tick;
                 int bestRate = allClosedValvesValues.poll() * -1;
@@ -120,13 +121,13 @@ public class A16
             while(valveSystem.nrTicks < NR_MINUTES) {
                 if (!valveSystem.isCurrentValveOpen() && valveSystem.currentValve.rate != 0) {
                     valveSystem = valveSystem.openValve().tick();
-                    System.out.println("Opened valve " + valveSystem.currentValve.name);
+                    //System.out.println("Opened valve " + valveSystem.currentValve.name);
                 } else {
                     var closedValves = new ArrayList<>(valveSystem.currentValve.valves);
                     closedValves.removeAll(valveSystem.openValveToTickTimes.keySet());
                     closedValves.sort(Collections.reverseOrder());
                     if (!closedValves.isEmpty()) {
-                        System.out.println("Goto valve " + closedValves.get(0));
+                        //System.out.println("Goto valve " + closedValves.get(0));
                         valveSystem = valveSystem.gotoValve(closedValves.get(0)).tick();
                     } else {
                         valveSystem = valveSystem.tick();

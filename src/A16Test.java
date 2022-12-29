@@ -16,10 +16,17 @@ class A16Test {
     private List<A16.Valve> getTestValves() throws IOException {
         return A16.loadValves(new File("a16.test.txt"));
     }
+    private List<A16.Valve> getFullValves() throws IOException {
+        return A16.loadValves(new File("a16.full.txt"));
+    }
 
     @Test
     void checkSolutionSys() throws IOException {
         assertEquals(1651, A16.calculate(getTestValves()).getActual());
+    }
+    @Test
+    void checkSolutionSysFull() throws IOException {
+        assertEquals(1651, A16.calculate(getFullValves()).getActual());
     }
     @Test
     void checkSolutionFirstStepSys() throws IOException {
