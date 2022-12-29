@@ -10,10 +10,29 @@ public class A17
         static List<Moves> parse(String moves){
             return moves.chars().mapToObj(e-> e=='<'?Left:Right).collect(Collectors.toList());
         }
+        static ListQueue<Moves> createQueue(String moves){
+            return new ListQueue(parse(moves));
+        }
+
     }
 
     public enum Block {
         Minus, Plus, L, I, Block
+    }
+
+    public static class ListQueue<T> {
+        private List<T> list;
+        int index = 0;
+
+        public ListQueue(List<T> list) {
+            this.list = list;
+        }
+
+        public T pop(){
+            index = (index+ 1) % list.size();
+            return list.get(index++);
+        }
+
     }
 
     public static class Board {
@@ -21,11 +40,16 @@ public class A17
         {
             return this;
         }
+        long getHeight()
+        {
+            return 0;
+        }
     }
     public static int calculateHeight(String directions)
     {
+        var board = new Board();
         for (int block = 0; block < 2022; block++) {
-
+            //board.dropBlock()
         }
         return 0;
     }

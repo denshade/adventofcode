@@ -13,6 +13,14 @@ class A17Test {
 
     }
     @Test
+    void parseListQueue()
+    {
+        assertEquals(A17.Moves.Right, A17.Moves.createQueue(testString).pop());
+        assertEquals(A17.Moves.Right, A17.Moves.createQueue(testString).pop());
+        assertEquals(A17.Moves.Right, A17.Moves.createQueue(testString).pop());
+        assertEquals(A17.Moves.Left, A17.Moves.createQueue(testString).pop());
+    }
+    @Test
     void calculate()
     {
         assertEquals(3068, A17.calculateHeight(testString));
