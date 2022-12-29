@@ -10,7 +10,7 @@ public class A17
             return moves.chars().mapToObj(e-> e=='<'?Left:Right).collect(Collectors.toList());
         }
         static ListQueue<Moves> createQueue(String moves){
-            return new ListQueue(parse(moves));
+            return new ListQueue<>(parse(moves));
         }
 
     }
