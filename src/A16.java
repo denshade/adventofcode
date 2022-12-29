@@ -26,7 +26,7 @@ public class A16
     public static ValveSystem calculate(List<Valve> valves)
     {
         var el = new OptimismElimination();
-        var sys = new ValveSystem(valves.get(0), valves);
+        var sys = new ValveSystem(valves.stream().filter(e -> e.name.equals("AA")).findFirst().orElseThrow(), valves);
         return (ValveSystem) el.calculate(sys);
     }
 
