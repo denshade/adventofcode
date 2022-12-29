@@ -13,11 +13,6 @@ public class A16
         int rate;
         List<Valve> valves = new ArrayList<>();
 
-        Valve()
-        {
-
-        }
-
         @Override
         public int compareTo(Valve o) {
             return this.rate - o.rate;

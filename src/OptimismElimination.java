@@ -22,11 +22,13 @@ public class OptimismElimination
             var currentSolution = toProcessQueue.poll();
             System.out.println(currentSolution);
             Solution bestGreedyWalk = currentSolution.getBestGreedyWalk();
+            System.out.println(bestGreedyWalk.getActual());
             System.out.println("====");
             var bestCandidate = bestGreedyWalk.getActual();
             if (bestCandidate > bestActual) {
                 bestActual = bestCandidate;
                 bestSolution = bestGreedyWalk.clone();
+                System.out.println("Cutting for "+bestActual);
                 toProcessQueue = filterPriorityOnActual(toProcessQueue, bestActual);
             }
             long finalBestActual = bestActual;
