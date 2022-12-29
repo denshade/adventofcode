@@ -58,10 +58,6 @@ public class A16B
             return newValveSystem;
         }
 
-        public ValveSystem openAndTick()
-        {
-            return openValve().tick();
-        }
         public ValveSystem gotoAndTick(Valve valve)
         {
             return gotoValve(valve).tick();
@@ -189,7 +185,7 @@ public class A16B
         }
 
         public int compareTo(OptimismElimination.Solution o) {
-            return (int)(-1*(getOptimistic())) - (int)(-1*(o.getOptimistic()));
+            return (int)(-1*(getActual())) - (int)(-1*(o.getActual()));
         }
 
     }
