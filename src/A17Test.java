@@ -21,6 +21,16 @@ class A17Test {
         assertEquals(A17.Moves.Left, A17.Moves.createQueue(testString).pop());
     }
     @Test
+    void parseListBlocks() {
+        var q = A17.Block.getBlockQueue();
+        assertEquals(A17.Block.Minus, q.pop());
+        assertEquals(A17.Block.Plus, q.pop());
+        assertEquals(A17.Block.L, q.pop());
+        assertEquals(A17.Block.I, q.pop());
+        assertEquals(A17.Block.Block, q.pop());
+        assertEquals(A17.Block.Minus, q.pop());
+    }
+        @Test
     void calculate()
     {
         assertEquals(3068, A17.calculateHeight(testString));

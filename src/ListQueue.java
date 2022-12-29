@@ -9,8 +9,9 @@ public class ListQueue<T> {
     }
 
     public T pop() {
+        var currentEl = list.get(index);
         index = (index + 1) % list.size();
-        return list.get(index++);
+        return currentEl;
     }
 
 }

@@ -16,7 +16,11 @@ public class A17
     }
 
     public enum Block {
-        Minus, Plus, L, I, Block
+        Minus, Plus, L, I, Block;
+        public static ListQueue<Block> getBlockQueue()
+        {
+            return new ListQueue<>(List.of(values()));
+        }
     }
 
     public static class Board {
