@@ -66,7 +66,7 @@ public class A16
         public ValveSystem openValve()
         {
             var newValveSystem = new ValveSystem(this);
-            newValveSystem.openValveToTickTimes.put(newValveSystem.currentValve, newValveSystem.nrTicks);
+            newValveSystem.openValveToTickTimes.put(newValveSystem.currentValve, newValveSystem.nrTicks + 1);
             return newValveSystem;
         }
 
