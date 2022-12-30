@@ -32,7 +32,7 @@ public class A17
                 case Minus -> List.of(new Point(xOffset,height), new Point(xOffset + 1,height), new Point(xOffset + 2,height), new Point(xOffset + 3,height));
                 case Plus -> List.of(
                                                                     new Point(xOffset + 1,height),
-                        new Point(xOffset - 1,height + 1),    new Point(xOffset + 1,height + 1), new Point(xOffset + 2,height + 1),
+                        new Point(xOffset,height + 1),    new Point(xOffset + 1,height + 1), new Point(xOffset + 2,height + 1),
                                                                     new Point(xOffset + 1,height + 2));
                 case L -> List.of(new Point(xOffset + 2,height),
                         new Point(xOffset + 2,height + 1),
@@ -59,6 +59,26 @@ public class A17
         private boolean[][] board;
         public Board(int width, int height) {
             board = new boolean[height][width];
+        }
+
+        public Board commitBoard(DynamicBlocks blocks)
+        {
+            for (Point point: blocks.points) {
+                board[point.y][point.x] = true;
+            }
+            return this;
+        }
+        public String toString()
+        {
+            var builder = new StringBuilder();
+            for (int y = 0; y < board.length; y++)
+            {
+                for (int x = 0; x < board[y].length; x++) {
+                    builder.append(board[y][x]?'#':'.');
+                }
+                builder.append('\n');
+            }
+            return builder.toString();
         }
 
         Board dropBlock(BlockType block, Queue<Moves> nextMoves)
