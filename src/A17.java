@@ -5,6 +5,9 @@ import java.util.stream.Collectors;
 
 public class A17
 {
+
+    private static final int WIDTH = 7;
+
     public enum Moves {
         Left, Right;
         static List<Moves> parse(String moves){
@@ -66,12 +69,10 @@ public class A17
             var dynamicBlock = DynamicBlocks.create(2,dropHeight, block);
             while(!incomingCollision(dynamicBlock)) {
                 var move = nextMoves.pop();
-                if (move == Moves.Left) {
-                    dynamicBlock = dynamicBlock.moveToLeft();
-                }
-                if (move == Moves.Right) {
-                    dynamicBlock = dynamicBlock.moveToRight(7);
-                }
+                dynamicBlock = switch (move) {
+                    case Left -> dynamicBlock.moveToLeft();
+                    case Right -> dynamicBlock.moveToRight(WIDTH);
+                };
                 dynamicBlock = dynamicBlock.moveDown();
             }
             commitBoard(dynamicBlock);
@@ -82,18 +83,16 @@ public class A17
             return dynamicBlock.points.stream().anyMatch(p -> p.y == 0 || board[p.y - 1][p.x]);
         }
 
-        long getHeight()
-        {
-            return 0;
-        }
     }
     public static int calculateHeight(String directions)
     {
-        var board = new Board("..@@@@.".length(), 4000);
+        var board = new Board(WIDTH, 4000);
+        var blockQueue = A17.BlockType.getBlockQueue();
+        var moveQueue = Moves.createQueue(directions);
         for (int block = 0; block < 2022; block++) {
-            //board.dropBlock()
+            board.dropBlock(blockQueue.pop(), moveQueue, board.getHeightCommittedBlocks() + 4);
         }
-        return 0;
+        return board.getHeightCommittedBlocks();
     }
 
 }
