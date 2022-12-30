@@ -43,7 +43,7 @@ public class A17
         public String toString()
         {
             var builder = new StringBuilder();
-            for (int y = 0; y <= getHeightCommittedBlocks(); y++)
+            for (int y = getHeightCommittedBlocks() - 1; y > -1; y--)
             {
                 for (int x = 0; x < board[y].length; x++) {
                     builder.append(board[y][x]?'#':'.');

@@ -12,9 +12,9 @@ public class DynamicBlocks {
                     new Point(xOffset + 1, height),
                     new Point(xOffset, height + 1), new Point(xOffset + 1, height + 1), new Point(xOffset + 2, height + 1),
                     new Point(xOffset + 1, height + 2));
-            case L -> java.util.List.of(new Point(xOffset + 2, height),
+            case L -> java.util.List.of(new Point(xOffset, height), new Point(xOffset + 1, height), new Point(xOffset + 2, height),
                     new Point(xOffset + 2, height + 1),
-                    new Point(xOffset, height + 2), new Point(xOffset + 1, height + 2), new Point(xOffset + 2, height + 2)
+                    new Point(xOffset + 2, height + 2)
             );
             case I -> java.util.List.of(new Point(xOffset, height),
                     new Point(xOffset, height + 1),

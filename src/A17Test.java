@@ -18,7 +18,7 @@ class A17Test {
         assertEquals("""
                 ##
                 ##
-                """, new A17.Board(2,2).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.Block)).toString());
+                """, new A17.Board(2,10).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.Block)).toString());
         assertEquals("""
                         #.
                         #.
