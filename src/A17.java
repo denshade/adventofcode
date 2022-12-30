@@ -43,7 +43,7 @@ public class A17
         public String toString()
         {
             var builder = new StringBuilder();
-            for (int y = 0; y < board.length; y++)
+            for (int y = 0; y <= getHeightCommittedBlocks(); y++)
             {
                 for (int x = 0; x < board[y].length; x++) {
                     builder.append(board[y][x]?'#':'.');
@@ -91,6 +91,7 @@ public class A17
         var moveQueue = Moves.createQueue(directions);
         for (int block = 0; block < 2022; block++) {
             board.dropBlock(blockQueue.pop(), moveQueue, board.getHeightCommittedBlocks() + 4);
+            System.out.println(board.toString());
         }
         return board.getHeightCommittedBlocks();
     }
