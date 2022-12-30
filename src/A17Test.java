@@ -13,6 +13,10 @@ class A17Test {
 
     }
     @Test
+    void createBlock() {
+        assertNotNull(A17.DynamicBlocks.create(2,2, A17.BlockType.Block));
+    }
+    @Test
     void parseListQueue()
     {
         ListQueue<A17.Moves> queue = A17.Moves.createQueue(testString);
@@ -23,13 +27,13 @@ class A17Test {
     }
     @Test
     void parseListBlocks() {
-        var q = A17.Block.getBlockQueue();
-        assertEquals(A17.Block.Minus, q.pop());
-        assertEquals(A17.Block.Plus, q.pop());
-        assertEquals(A17.Block.L, q.pop());
-        assertEquals(A17.Block.I, q.pop());
-        assertEquals(A17.Block.Block, q.pop());
-        assertEquals(A17.Block.Minus, q.pop());
+        var q = A17.BlockType.getBlockQueue();
+        assertEquals(A17.BlockType.Minus, q.pop());
+        assertEquals(A17.BlockType.Plus, q.pop());
+        assertEquals(A17.BlockType.L, q.pop());
+        assertEquals(A17.BlockType.I, q.pop());
+        assertEquals(A17.BlockType.Block, q.pop());
+        assertEquals(A17.BlockType.Minus, q.pop());
     }
         @Test
     void calculate()

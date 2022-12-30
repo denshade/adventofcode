@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.util.List;
 import java.util.Queue;
 import java.util.stream.Collectors;
@@ -15,16 +16,52 @@ public class A17
 
     }
 
-    public enum Block {
+    public enum BlockType {
         Minus, Plus, L, I, Block;
-        public static ListQueue<Block> getBlockQueue()
+        public static ListQueue<BlockType> getBlockQueue()
         {
             return new ListQueue<>(List.of(values()));
         }
     }
+    public static class DynamicBlocks
+    {
+        private final List<Point> points;
+
+        public static DynamicBlocks create(int xOffset, int height, BlockType blockType){
+            var pts = switch(blockType){
+                case Minus -> List.of(new Point(xOffset,height), new Point(xOffset + 1,height), new Point(xOffset + 2,height), new Point(xOffset + 3,height));
+                case Plus -> List.of(
+                                                                    new Point(xOffset + 1,height),
+                        new Point(xOffset - 1,height + 1),    new Point(xOffset + 1,height + 1), new Point(xOffset + 2,height + 1),
+                                                                    new Point(xOffset + 1,height + 2));
+                case L -> List.of(new Point(xOffset + 2,height),
+                        new Point(xOffset + 2,height + 1),
+                        new Point(xOffset,height + 2), new Point(xOffset + 1,height + 2),new Point(xOffset + 2,height + 2)
+                );
+                case I -> List.of(new Point(xOffset,height),
+                        new Point(xOffset,height + 1),
+                        new Point(xOffset,height + 2),
+                        new Point(xOffset,height + 3)
+                );
+                case Block -> List.of(new Point(xOffset,height),new Point(xOffset + 1,height),
+                        new Point(xOffset,height + 1),new Point(xOffset + 1,height + 1));
+                default -> throw new IllegalStateException("Unexpected value: " + blockType);
+            };
+            return new DynamicBlocks(pts);
+        }
+        private DynamicBlocks(List<Point> points)
+        {
+            this.points = points;
+        }
+    }
 
     public static class Board {
-        Board dropBlock(Block block, Queue<Moves> nextMoves)
+        private boolean[][] board;
+        public Board(int width, int height) {
+            board = new boolean[height][width];
+        }
+
+        Board dropBlock(BlockType block, Queue<Moves> nextMoves)
         {
             return this;
         }
@@ -35,7 +72,7 @@ public class A17
     }
     public static int calculateHeight(String directions)
     {
-        var board = new Board();
+        var board = new Board("..@@@@.".length(), 4000);
         for (int block = 0; block < 2022; block++) {
             //board.dropBlock()
         }
