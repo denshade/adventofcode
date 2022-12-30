@@ -32,21 +32,33 @@ public class DynamicBlocks {
         this.points = points;
     }
 
-    public DynamicBlocks moveToLeft() {
+    public DynamicBlocks moveToLeft(A17.Board board) {
         if (points.stream().anyMatch(p -> p.x == 0)) {
             return this;
         }
-        return new DynamicBlocks(points.stream().map(p->new Point(p.x - 1, p.y)).collect(Collectors.toList()));
+        DynamicBlocks newPosition = new DynamicBlocks(points.stream().map(p -> new Point(p.x - 1, p.y)).collect(Collectors.toList()));
+        if (newPosition.points.stream().anyMatch(board::hasPoint)) {
+            return this;
+        }
+        return newPosition;
     }
-    public DynamicBlocks moveToRight(int width) {
+    public DynamicBlocks moveToRight(int width, A17.Board board) {
         if (points.stream().anyMatch(p -> p.x == width - 1)) {
             return this;
         }
-        return new DynamicBlocks(points.stream().map(p->new Point(p.x + 1, p.y)).collect(Collectors.toList()));
+        DynamicBlocks newPosition = new DynamicBlocks(points.stream().map(p -> new Point(p.x + 1, p.y)).collect(Collectors.toList()));
+        if (newPosition.points.stream().anyMatch(board::hasPoint)) {
+            return this;
+        }
+        return newPosition;
     }
 
-    public DynamicBlocks moveDown() {
-        return new DynamicBlocks(points.stream().map(p->new Point(p.x, p.y - 1)).collect(Collectors.toList()));
+    public DynamicBlocks moveDown(A17.Board board) {
+        DynamicBlocks newPosition = new DynamicBlocks(points.stream().map(p -> new Point(p.x, p.y - 1)).collect(Collectors.toList()));
+        if (newPosition.points.stream().anyMatch(board::hasPoint)) {
+            throw new IllegalStateException("Nope!");
+        }
+        return newPosition;
     }
 
 

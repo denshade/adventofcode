@@ -70,10 +70,13 @@ public class A17
             while(!incomingCollision(dynamicBlock)) {
                 var move = nextMoves.pop();
                 dynamicBlock = switch (move) {
-                    case Left -> dynamicBlock.moveToLeft();
-                    case Right -> dynamicBlock.moveToRight(WIDTH);
+                    case Left -> dynamicBlock.moveToLeft(this);
+                    case Right -> dynamicBlock.moveToRight(WIDTH, this);
                 };
-                dynamicBlock = dynamicBlock.moveDown();
+                if (!incomingCollision(dynamicBlock))
+                {
+                    dynamicBlock = dynamicBlock.moveDown(this);
+                }
             }
             commitBoard(dynamicBlock);
             return this;
@@ -83,6 +86,9 @@ public class A17
             return dynamicBlock.points.stream().anyMatch(p -> p.y == 0 || board[p.y - 1][p.x]);
         }
 
+        public boolean hasPoint(Point p) {
+            return board[p.y][p.x];
+        }
     }
     public static int calculateHeight(String directions)
     {
@@ -91,7 +97,7 @@ public class A17
         var moveQueue = Moves.createQueue(directions);
         for (int block = 0; block < 2022; block++) {
             board.dropBlock(blockQueue.pop(), moveQueue, board.getHeightCommittedBlocks() + 4);
-            System.out.println(board.toString());
+            //System.out.println(board);
         }
         return board.getHeightCommittedBlocks();
     }
