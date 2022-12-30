@@ -15,22 +15,30 @@ class A17Test {
     @Test
     void createBlock() {
         assertNotNull(A17.DynamicBlocks.create(0,0, A17.BlockType.Block));
-        assertEquals("##\n" +
-                "##\n", new A17.Board(2,2).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Block)).toString());
-        assertEquals("#.\n" +
-                "#.\n"+
-                "#.\n"+
-                "#.\n"
+        assertEquals("""
+                ##
+                ##
+                """, new A17.Board(2,2).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Block)).toString());
+        assertEquals("""
+                        #.
+                        #.
+                        #.
+                        #.
+                        """
                 , new A17.Board(2,4).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.I)).toString());
         assertEquals("####\n"
                 , new A17.Board(4,1).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Minus)).toString());
-        assertEquals(".#.\n" +
-                        "###\n" +
-                        ".#.\n"
+        assertEquals("""
+                        .#.
+                        ###
+                        .#.
+                        """
                 , new A17.Board(3,3).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Plus)).toString());
-        assertEquals("..#\n" +
-                        "..#\n" +
-                        "###"
+        assertEquals("""
+                        ..#
+                        ..#
+                        ###
+                        """
                 , new A17.Board(3,3).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.L)).toString());
     }
     @Test
