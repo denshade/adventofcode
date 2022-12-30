@@ -14,34 +14,45 @@ class A17Test {
     }
     @Test
     void createBlock() {
-        assertNotNull(A17.DynamicBlocks.create(0,0, A17.BlockType.Block));
+        assertNotNull(DynamicBlocks.create(0,0, A17.BlockType.Block));
         assertEquals("""
                 ##
                 ##
-                """, new A17.Board(2,2).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Block)).toString());
+                """, new A17.Board(2,2).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.Block)).toString());
         assertEquals("""
                         #.
                         #.
                         #.
                         #.
                         """
-                , new A17.Board(2,4).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.I)).toString());
+                , new A17.Board(2,4).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.I)).toString());
         assertEquals("####\n"
-                , new A17.Board(4,1).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Minus)).toString());
+                , new A17.Board(4,1).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.Minus)).toString());
         assertEquals("""
                         .#.
                         ###
                         .#.
                         """
-                , new A17.Board(3,3).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.Plus)).toString());
+                , new A17.Board(3,3).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.Plus)).toString());
         assertEquals("""
                         ..#
                         ..#
                         ###
                         """
-                , new A17.Board(3,3).commitBoard(A17.DynamicBlocks.create(0,0, A17.BlockType.L)).toString());
+                , new A17.Board(3,3).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.L)).toString());
+    }
+
+    @Test
+    void dropDown()
+    {
+        assertTrue(new A17.Board(7,100).dropBlock(A17.BlockType.Minus, A17.Moves.createQueue(testString), 4).toString().contains("..####."));
     }
     @Test
+    void verifyHeight() {
+        assertEquals(0,new A17.Board(7,100).getHeightCommittedBlocks());
+        assertEquals(3,new A17.Board(7,100).commitBoard(DynamicBlocks.create(0,0, A17.BlockType.L)).getHeightCommittedBlocks());
+    }
+        @Test
     void parseListQueue()
     {
         ListQueue<A17.Moves> queue = A17.Moves.createQueue(testString);

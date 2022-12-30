@@ -23,37 +23,6 @@ public class A17
             return new ListQueue<>(List.of(values()));
         }
     }
-    public static class DynamicBlocks
-    {
-        private final List<Point> points;
-
-        public static DynamicBlocks create(int xOffset, int height, BlockType blockType){
-            var pts = switch(blockType){
-                case Minus -> List.of(new Point(xOffset,height), new Point(xOffset + 1,height), new Point(xOffset + 2,height), new Point(xOffset + 3,height));
-                case Plus -> List.of(
-                                                                    new Point(xOffset + 1,height),
-                        new Point(xOffset,height + 1),    new Point(xOffset + 1,height + 1), new Point(xOffset + 2,height + 1),
-                                                                    new Point(xOffset + 1,height + 2));
-                case L -> List.of(new Point(xOffset + 2,height),
-                        new Point(xOffset + 2,height + 1),
-                        new Point(xOffset,height + 2), new Point(xOffset + 1,height + 2),new Point(xOffset + 2,height + 2)
-                );
-                case I -> List.of(new Point(xOffset,height),
-                        new Point(xOffset,height + 1),
-                        new Point(xOffset,height + 2),
-                        new Point(xOffset,height + 3)
-                );
-                case Block -> List.of(new Point(xOffset,height),new Point(xOffset + 1,height),
-                        new Point(xOffset,height + 1),new Point(xOffset + 1,height + 1));
-                default -> throw new IllegalStateException("Unexpected value: " + blockType);
-            };
-            return new DynamicBlocks(pts);
-        }
-        private DynamicBlocks(List<Point> points)
-        {
-            this.points = points;
-        }
-    }
 
     public static class Board {
         private boolean[][] board;
@@ -80,11 +49,39 @@ public class A17
             }
             return builder.toString();
         }
-
-        Board dropBlock(BlockType block, Queue<Moves> nextMoves)
+        int getHeightCommittedBlocks() {
+            for (int y = 0; y < board.length; y++) {
+                var hasElement = false;
+                for (int x = 0; x < board[y].length; x++) {
+                    if (board[y][x]) {
+                        hasElement = true;
+                    }
+                }
+                if (!hasElement) return y;
+            }
+            return board.length;
+        }
+        Board dropBlock(BlockType block, ListQueue<Moves> nextMoves, int dropHeight)
         {
+            var dynamicBlock = DynamicBlocks.create(2,dropHeight, block);
+            while(!incomingCollision(dynamicBlock)) {
+                var move = nextMoves.pop();
+                if (move == Moves.Left) {
+                    dynamicBlock = dynamicBlock.moveToLeft();
+                }
+                if (move == Moves.Right) {
+                    dynamicBlock = dynamicBlock.moveToRight(7);
+                }
+                dynamicBlock = dynamicBlock.moveDown();
+            }
+            commitBoard(dynamicBlock);
             return this;
         }
+
+        private boolean incomingCollision(DynamicBlocks dynamicBlock) {
+            return dynamicBlock.points.stream().anyMatch(p -> p.y == 0 || board[p.y - 1][p.x]);
+        }
+
         long getHeight()
         {
             return 0;
