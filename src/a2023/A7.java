@@ -1,9 +1,19 @@
 package a2023;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class A7 {
+
+    public static BigInteger calc(List<CardsAndScore> parse) {
+        BigInteger total = BigInteger.ZERO;
+        var l = sort(parse);
+        for (int i = 1; i <= l.size(); i++) {
+            total = total.add(BigInteger.valueOf(l.get(i - 1).score * i));
+        }
+        return total;
+    }
 
     public enum HandType {
         HighCard(7), OnePair(6), TwoPair(5), ThreeOfAKind(4), FullHouse(3), FourOfAKind(2), FiveOfAKind(1);
@@ -13,10 +23,14 @@ public class A7 {
         }
     }
     public enum Card {
-        cA(1), cK(2), cQ(3), cJ(4), cT(5), c9(6),c8(7),c7(8),c6(9),c5(10),c4(11),c3(12),c2(13);
+        cA(13), cK(12), cQ(11), cJ(10), cT(9), c9(8),c8(7),c7(6),c6(5),c5(4),c4(3),c3(2),c2(1);
         final int order;
         Card(int order) {
             this.order = order;
+        }
+
+        public int compare(Card o) {
+            return Integer.compare(order, o.order);
         }
     }
 
@@ -28,7 +42,12 @@ public class A7 {
         @Override
         public int compareTo(CardsAndScore o) {
             if(o.handType == handType) {
-                return o.cards.compareTo(cards);
+                for (int i = 0; i < cards.length(); i++) {
+                    if (cards.charAt(i) == o.cards.charAt(i)) continue;
+                    var currentCard = Card.valueOf("c" + cards.charAt(i));
+                    var otherCard = Card.valueOf("c" + o.cards.charAt(i));
+                    return currentCard.compare(otherCard);
+                }
             }
             return Integer.compare(o.handType.order, handType.order);
         }
