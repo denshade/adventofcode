@@ -29,4 +29,15 @@ class A7Test {
         assertEquals(A7.HandType.HighCard, A7.detect("ABCDE"));
     }
 
+    @Test
+    void checkCompare() {
+        var list = A7.sort(A7.parse(s));
+        assertEquals("32T3K", list.get(0).cards);
+        assertEquals("KTJJT", list.get(1).cards);
+        assertEquals("KK677", list.get(2).cards);
+        assertEquals("T55J5", list.get(3).cards);
+        assertEquals("QQQJA", list.get(3).cards);
+
+    }
+
 }
