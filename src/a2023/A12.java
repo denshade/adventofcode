@@ -18,14 +18,14 @@ public class A12 {
         var results = new ArrayList<Integer>();
         boolean inGroup = false;
         int groupSize = 0;
-        for (int i = 0; i < states.size(); i++) {
-            if (states.get(i) == State.Broken && !inGroup) {
+        for (State state : states) {
+            if (state == State.Broken && !inGroup) {
                 inGroup = true;
             }
-            if (states.get(i) == State.Broken) {
+            if (state == State.Broken) {
                 groupSize++;
             }
-            if (states.get(i) == State.Good && inGroup) {
+            if (state == State.Good && inGroup) {
                 results.add(groupSize);
                 groupSize = 0;
                 inGroup = false;
