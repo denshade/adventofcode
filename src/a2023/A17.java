@@ -63,7 +63,23 @@ public class A17 {
             }
             return list;
         }
+        public Walk clone() {
+            Walk walk = new Walk();
+            walk.directionsSoFar = new ArrayList<>(directionsSoFar);
+            walk.currentDirection = currentDirection;
+            walk.x = x;
+            walk.y = y;
+            walk.currentHeat = currentHeat;
+            return walk;
+
+        }
+        public static Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
+            var newWalk = walk.clone();
+            return newWalk;
+        }
     }
+
+
 
 
     public static int bestWalk(int[][] mapObj) {
