@@ -25,4 +25,14 @@ class A12Test {
         assertFalse(A12.doesLineAndOptionAgree(line3));
     }
 
+    @Test
+    void countLines() {
+        //assertEquals(1, A12.countOptions(A12.parse("#.#.### 1,1,3")));
+        //assertEquals(1, A12.countOptions(A12.parse("?.#.### 1,1,3")));
+        //assertEquals(0, A12.countOptions(A12.parse("#.#.### 1,1,4")));
+        assertEquals(4, A12.countOptions(A12.parse(".??..??...?##. 1,1,3")));
+        assertEquals(10, A12.countOptions(A12.parse("?###???????? 3,2,1")));
+
+    }
+
 }

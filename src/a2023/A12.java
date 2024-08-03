@@ -37,10 +37,40 @@ public class A12 {
         return results;
     }
 
+    public static int countOptions(LineAndOptions lineAndOptions) {
+        return recurseFill(lineAndOptions);
+    }
+
+    public static int recurseFill(LineAndOptions lineAndOptions) {
+        if (!lineAndOptions.states.contains(State.Unknown)) {
+            if (findGroupsForStates(lineAndOptions.states).equals(lineAndOptions.groups)) {
+                return 1;
+            } else {
+                return 0;
+            }
+        } else {
+            var firstUnknownIndex = lineAndOptions.states.indexOf(State.Unknown);
+            var separate = new LineAndOptions(lineAndOptions);
+            separate.states.set(firstUnknownIndex, State.Broken);
+            var count = recurseFill(separate);
+            var separate2 = new LineAndOptions(lineAndOptions);
+            separate2.states.set(firstUnknownIndex, State.Good);
+            count += recurseFill(separate2);
+            return count;
+        }
+    }
+
     public enum State {
         Broken, Unknown, Good
     }
     public static class LineAndOptions {
+        public LineAndOptions() {}
+        public LineAndOptions(LineAndOptions lineAndOptions) {
+            states = new ArrayList<>();
+            states.addAll(lineAndOptions.states);
+            groups = new ArrayList<>();
+            groups.addAll(lineAndOptions.groups);
+        }
         public List<State> states;
         public List<Integer> groups;
     }
