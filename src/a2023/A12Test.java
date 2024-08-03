@@ -15,4 +15,14 @@ class A12Test {
         assertEquals(List.of(Unknown, Unknown, Unknown, Good, Broken, Broken, Broken), v.states);
     }
 
+    @Test
+    void doesLineAndOption() {
+        A12.LineAndOptions line = A12.parse("#.#.### 1,1,3");
+        assertTrue(A12.doesLineAndOptionAgree(line));
+        A12.LineAndOptions line2 = A12.parse(".#.###.#.###### 1,3,1,6");
+        assertTrue(A12.doesLineAndOptionAgree(line2));
+        A12.LineAndOptions line3 = A12.parse(".#.###.#.###### 1,3,1,5");
+        assertFalse(A12.doesLineAndOptionAgree(line3));
+    }
+
 }
