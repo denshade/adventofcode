@@ -60,6 +60,15 @@ public class A12 {
         }
     }
 
+    public static int count(String test) {
+        var count = 0;
+        var lines = test.split("\n");
+        for (var line : lines) {
+            count += A12.countOptions(A12.parse(line));
+        }
+        return count;
+    }
+
     public enum State {
         Broken, Unknown, Good
     }
