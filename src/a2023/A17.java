@@ -87,17 +87,46 @@ public class A17 {
             newWalk.directionsSoFar.add(direction);
             return newWalk;
         }
+
+        public boolean isFinal(int height, int width) {
+            return (x == width - 1 && y == height - 1);
+        }
     }
 
 
     public static class BruteforceSearch {
         private final int[][] mapObj;
+        private int height;
+        private int width;
 
         BruteforceSearch(int[][] mapObj) {
             this.mapObj = mapObj;
+            height = mapObj.length;
+            width = mapObj[0].length;
+        }
+        public Walk findNext(Walk currentWalk) {
+            if (currentWalk.isFinal(height, width)) {
+                return currentWalk;
+            }
+            if (currentWalk.currentHeat > 105) {
+                return null;
+            }
+            Walk bestWalk = null;
+            for (Direction dir : currentWalk.allowedDirections(width, height)) {
+                var newWalk = Walk.moveTo(mapObj, currentWalk, dir);
+                var bestFinalWalk = findNext(newWalk);
+                if (bestFinalWalk == null) continue;// no solutions here, skip.
+                if (bestWalk == null) {
+                    bestWalk = bestFinalWalk;
+                }
+                if (bestWalk.currentHeat > bestFinalWalk.currentHeat) {
+                    bestWalk = bestFinalWalk;
+                }
+            }
+            return bestWalk;
         }
         public Walk find() {
-            return new Walk();
+            return findNext(new Walk());
         }
     }
 

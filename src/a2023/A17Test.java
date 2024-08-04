@@ -84,7 +84,9 @@ class A17Test {
     @Test
     void bruteForceSearch() {
         var searcher = new A17.BruteforceSearch(testMap());
-        assertNotNull(searcher.find());
+        A17.Walk actual = searcher.find();
+        assertNotNull(actual);
+        assertEquals(102, actual.currentHeat);
     }
 
     private int[][] testMap() {
