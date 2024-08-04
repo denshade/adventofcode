@@ -75,6 +75,15 @@ public class A17 {
         }
         public static Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
             var newWalk = walk.clone();
+            switch(direction) {
+                case Up -> newWalk.y = newWalk.y-1;
+                case Down -> newWalk.y = newWalk.y + 1;
+                case Left -> newWalk.x = newWalk.x - 1;
+                case Right -> newWalk.x = newWalk.x + 1;
+            }
+            newWalk.currentDirection = direction;
+            newWalk.currentHeat += mapObj[newWalk.y][newWalk.x];
+            newWalk.directionsSoFar.add(direction);
             return newWalk;
         }
     }
