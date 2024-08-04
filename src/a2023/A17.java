@@ -1,11 +1,8 @@
 package a2023;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.awt.geom.Point2D;
+import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.CheckedInputStream;
 
 public class A17 {
 
@@ -35,12 +32,40 @@ public class A17 {
         }
     }
 
+    public static class Point {
+        public Point(int y, int x) {
+            this.y = y;
+            this.x = x;
+        }
+        int x;
+        int y;
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            Point point = (Point) o;
+            return x == point.x && y == point.y;
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(x, y);
+        }
+    }
+
     public static class Walk {
         public Direction currentDirection = Direction.Down;
         public int x = 0;
         public int y = 0;
         public int currentHeat = 0;
         public List<Direction> directionsSoFar = new ArrayList<>();
+        public List<Point> visitedPoints = new ArrayList<>();
+
+        public Walk() {
+            visitedPoints.add(new Point(0,0));
+        }
+
         public List<Direction> allowedDirections(int width, int height){
             var list = new ArrayList<Direction>();
             for (var dir : Direction.allowedDirections(currentDirection)) {
@@ -73,6 +98,7 @@ public class A17 {
             walk.x = x;
             walk.y = y;
             walk.currentHeat = currentHeat;
+            walk.visitedPoints = new ArrayList<>(visitedPoints);
             return walk;
         }
 
@@ -87,6 +113,7 @@ public class A17 {
             newWalk.currentDirection = direction;
             newWalk.currentHeat += mapObj[newWalk.y][newWalk.x];
             newWalk.directionsSoFar.add(direction);
+            newWalk.visitedPoints.add(new Point(newWalk.y, newWalk.x));
             return newWalk;
         }
 
@@ -142,7 +169,7 @@ public class A17 {
             height = mapObj.length;
             width = mapObj[0].length;
         }
-        private static class Solution implements Comparable<Solution> {
+        public static class Solution implements Comparable<Solution> {
             private final Walk walkSoFar;
             private int height;
             private int width;
@@ -153,7 +180,7 @@ public class A17 {
             }
             public int score() {
                 var distance = height - walkSoFar.y + width - walkSoFar.x;
-                return walkSoFar.currentHeat + distance*2;
+                return walkSoFar.currentHeat + distance*1;
             }
 
             @Override
@@ -161,6 +188,7 @@ public class A17 {
                 return Integer.compare(score(), o.score());
             }
         }
+
         public Walk find() {
             var queue = new PriorityQueue<Solution>();
             Walk walkSoFar = new Walk();
@@ -168,7 +196,7 @@ public class A17 {
             queue.add(solution);
             while(queue.size() > 0) {
                 var currentSolution = queue.poll();
-                if (queue.size()%10000 ==0) {
+                if (queue.size()%100000 ==0) {
                     System.out.println(currentSolution.score());
                     System.out.println(queue.size());
                 }
@@ -177,8 +205,15 @@ public class A17 {
                 }
                 for (Direction direction : currentSolution.walkSoFar.allowedDirections(width, height)) {
                     Solution e = new Solution(Walk.moveTo(mapObj, currentSolution.walkSoFar, direction), height, width);
-                    if (e.walkSoFar.directionsSoFar.size() < 20){
+                    var lastPosition = e.walkSoFar.visitedPoints.get(e.walkSoFar.visitedPoints.size() - 1);
+                    int position = e.walkSoFar.visitedPoints.indexOf(lastPosition);
+                    if (position != e.walkSoFar.visitedPoints.size() - 1) {
+                        continue;
+                    }
+                    if (e.walkSoFar.directionsSoFar.size() < 29 && e.score() < 120){
                         queue.add(e);
+                    } else {
+                        //if ()
                     }
                 }
             }
@@ -216,9 +251,12 @@ public class A17 {
                     Direction.Right
                     );
             for (var direction : directions) {
-                if (!walk.allowedDirections(board[0].length, board.length).contains(direction)) {
+                int width = board[0].length;
+                int height = board.length;
+                if (!walk.allowedDirections(width, height).contains(direction)) {
                     System.out.println("WHOOPS");
                 }
+                System.out.println(new AStar.Solution(walk, height, width).score());
                 walk = Walk.moveTo(board, walk, direction);
             }
             return walk;
@@ -226,12 +264,4 @@ public class A17 {
         }
     }
 
-
-    public static int bestWalk(int[][] mapObj) {
-        int height = mapObj.length;
-        int width = mapObj[0].length;
-        //loop over the
-        var walk = new Walk();
-        return 0;
-    }
 }

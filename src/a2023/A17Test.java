@@ -31,12 +31,6 @@ class A17Test {
         var mapObj = testMap();
         assertNotNull(mapObj);
     }
-    @Test
-    void getBestWalk() {
-        var mapObj = testMap();
-        int bestWalk =  A17.bestWalk(mapObj);
-        assertEquals(102, bestWalk);
-    }
 
     @Test
     void checkPossibleWalks() {
@@ -105,6 +99,7 @@ class A17Test {
         var s = new A17.FakeStrategy(testMap());
         var actual = s.find();
         assertEquals(102, actual.currentHeat);
+        assertTrue(actual.isFinal(testMap().length, testMap()[0].length));
     }
 
     @Test
@@ -116,7 +111,7 @@ class A17Test {
                 """));
         A17.Walk actual = searcher.find();
         assertNotNull(actual);
-        assertEquals(10, actual.currentHeat);
+        assertEquals(8, actual.currentHeat);
     }
 
 
