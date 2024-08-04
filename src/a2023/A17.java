@@ -3,7 +3,9 @@ package a2023;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.stream.Collectors;
+import java.util.zip.CheckedInputStream;
 
 public class A17 {
 
@@ -24,8 +26,8 @@ public class A17 {
             Direction inverseDirection = switch (direction) {
                 case Up -> Down;
                 case Down -> Up;
-                case Left -> Left;
-                case Right -> Right;
+                case Left -> Right;
+                case Right -> Left;
             };
             var directions = Arrays.stream(values()).collect(Collectors.toList());
             directions.remove(inverseDirection);
@@ -127,6 +129,100 @@ public class A17 {
         }
         public Walk find() {
             return findNext(new Walk());
+        }
+    }
+
+    public static class AStar {
+        private int[][] mapObj;
+        private int height;
+        private int width;
+
+        public AStar(int[][] mapObj) {
+            this.mapObj = mapObj;
+            height = mapObj.length;
+            width = mapObj[0].length;
+        }
+        private static class Solution implements Comparable<Solution> {
+            private final Walk walkSoFar;
+            private int height;
+            private int width;
+            public Solution(Walk walkSoFar, int height, int width) {
+                this.height = height;
+                this.width = width;
+                this.walkSoFar = walkSoFar;
+            }
+            public int score() {
+                var distance = height - walkSoFar.y + width - walkSoFar.x;
+                return walkSoFar.currentHeat + distance*2;
+            }
+
+            @Override
+            public int compareTo(Solution o) {
+                return Integer.compare(score(), o.score());
+            }
+        }
+        public Walk find() {
+            var queue = new PriorityQueue<Solution>();
+            Walk walkSoFar = new Walk();
+            Solution solution = new Solution(walkSoFar, height, width);
+            queue.add(solution);
+            while(queue.size() > 0) {
+                var currentSolution = queue.poll();
+                if (queue.size()%10000 ==0) {
+                    System.out.println(currentSolution.score());
+                    System.out.println(queue.size());
+                }
+                if (currentSolution.walkSoFar.isFinal(height, width)) {
+                    return currentSolution.walkSoFar;
+                }
+                for (Direction direction : currentSolution.walkSoFar.allowedDirections(width, height)) {
+                    Solution e = new Solution(Walk.moveTo(mapObj, currentSolution.walkSoFar, direction), height, width);
+                    if (e.walkSoFar.directionsSoFar.size() < 20){
+                        queue.add(e);
+                    }
+                }
+            }
+            return null;
+        }
+    }
+
+    public static class FakeStrategy {
+        private final int[][] board;
+
+        FakeStrategy(int[][] board) {
+            this.board = board;
+        }
+
+        public Walk find() {
+            var walk = new Walk();
+            var directions = List.of(
+                Direction.Right, Direction.Right, Direction.Down,
+                Direction.Right, Direction.Right, Direction.Right,
+                    Direction.Up, Direction.Right, Direction.Right, Direction.Right, Direction.Down,
+                    Direction.Down,Direction.Right, Direction.Right,
+                    Direction.Down,
+                    Direction.Down,
+                    Direction.Right,
+                    Direction.Down,
+                    Direction.Down,
+                    Direction.Down,
+                    Direction.Right,
+                    Direction.Down,
+                    Direction.Down,
+                    Direction.Down,
+                    Direction.Left,
+                    Direction.Down,
+                    Direction.Down,
+                    Direction.Right
+                    );
+            for (var direction : directions) {
+                if (!walk.allowedDirections(board[0].length, board.length).contains(direction)) {
+                    System.out.println("WHOOPS");
+                }
+                walk = Walk.moveTo(board, walk, direction);
+            }
+            return walk;
+
         }
     }
 

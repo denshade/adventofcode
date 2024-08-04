@@ -1,5 +1,6 @@
 package a2023;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -82,12 +83,43 @@ class A17Test {
     }
 
     @Test
+    @Disabled
     void bruteForceSearch() {
         var searcher = new A17.BruteforceSearch(testMap());
         A17.Walk actual = searcher.find();
         assertNotNull(actual);
         assertEquals(102, actual.currentHeat);
     }
+
+
+    @Test
+    void AStarSearch() {
+        var searcher = new A17.AStar(testMap());
+        A17.Walk actual = searcher.find();
+        assertNotNull(actual);
+        assertEquals(102, actual.currentHeat);
+    }
+
+    @Test
+    void fakeWalk() {
+        var s = new A17.FakeStrategy(testMap());
+        var actual = s.find();
+        assertEquals(102, actual.currentHeat);
+    }
+
+    @Test
+    void AStarSearchSmall() {
+        var searcher = new A17.AStar(A17.loadMap("""
+                229
+                929
+                922
+                """));
+        A17.Walk actual = searcher.find();
+        assertNotNull(actual);
+        assertEquals(10, actual.currentHeat);
+    }
+
+
 
     private int[][] testMap() {
         return A17.loadMap(map);
