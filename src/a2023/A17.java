@@ -63,6 +63,7 @@ public class A17 {
             }
             return list;
         }
+
         public Walk clone() {
             Walk walk = new Walk();
             walk.directionsSoFar = new ArrayList<>(directionsSoFar);
@@ -71,8 +72,8 @@ public class A17 {
             walk.y = y;
             walk.currentHeat = currentHeat;
             return walk;
-
         }
+
         public static Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
             var newWalk = walk.clone();
             switch(direction) {
@@ -89,9 +90,21 @@ public class A17 {
     }
 
 
+    public static class BruteforceSearch {
+        private final int[][] mapObj;
+
+        BruteforceSearch(int[][] mapObj) {
+            this.mapObj = mapObj;
+        }
+        public Walk find() {
+            return new Walk();
+        }
+    }
 
 
     public static int bestWalk(int[][] mapObj) {
+        int height = mapObj.length;
+        int width = mapObj[0].length;
         //loop over the
         var walk = new Walk();
         return 0;
