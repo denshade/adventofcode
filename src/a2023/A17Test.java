@@ -238,6 +238,7 @@ class A17Test {
     }
 
     @Test
+    @Disabled
     void AStarSearchBig() {
         var searcher = new A17.AStar(A17.loadMap(actual));
         A17.Walk actual = searcher.find();

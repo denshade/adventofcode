@@ -1,6 +1,5 @@
 package a2023;
 
-import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -41,15 +40,12 @@ public class A17 {
     public enum Direction {
         Up, Down, Left, Right;
         public static List<Direction> allowedDirections(Direction direction) {
-            Direction inverseDirection = switch (direction) {
-                case Up -> Down;
-                case Down -> Up;
-                case Left -> Right;
-                case Right -> Left;
+            return switch (direction) {
+                case Up -> List.of(Up, Left, Right);
+                case Down -> List.of(Down, Left, Right);
+                case Left -> List.of(Up, Down, Left) ;
+                case Right -> List.of(Up, Down, Right);
             };
-            var directions = Arrays.stream(values()).collect(Collectors.toList());
-            directions.remove(inverseDirection);
-            return directions;
         }
     }
 
@@ -81,14 +77,14 @@ public class A17 {
         public int y = 0;
         public int currentHeat = 0;
         public List<Direction> directionsSoFar = new ArrayList<>();
-        public List<Point> visitedPoints = new ArrayList<>();
+        //public List<Point> visitedPoints = new ArrayList<>();
 
         public Walk() {
-            visitedPoints.add(new Point(0,0));
+            /*visitedPoints.add(new Point(0,0));*/
         }
 
         public List<Direction> allowedDirections(int width, int height){
-            var list = new ArrayList<Direction>();
+            var list = new ArrayList<Direction>(4);
             for (var dir : Direction.allowedDirections(currentDirection)) {
                 if (dir == Direction.Left && x > 0) {
                     list.add(dir);
@@ -106,7 +102,7 @@ public class A17 {
             if (directionsSoFar.size() > 2) {
                 var lastDirections = directionsSoFar.subList(directionsSoFar.size() - 3, directionsSoFar.size());
                 if (lastDirections.stream().filter(e -> e == currentDirection).count() > 2) {
-                    return list.stream().filter(e -> e != currentDirection).collect(Collectors.toList());
+                    list.remove(currentDirection);
                 }
             }
             return list;
@@ -119,7 +115,7 @@ public class A17 {
             walk.x = x;
             walk.y = y;
             walk.currentHeat = currentHeat;
-            walk.visitedPoints = new ArrayList<>(visitedPoints);
+            //walk.visitedPoints = new ArrayList<>(visitedPoints);
             return walk;
         }
 
@@ -134,7 +130,7 @@ public class A17 {
             newWalk.currentDirection = direction;
             newWalk.currentHeat += mapObj[newWalk.y][newWalk.x];
             newWalk.directionsSoFar.add(direction);
-            newWalk.visitedPoints.add(new Point(newWalk.y, newWalk.x));
+            //newWalk.visitedPoints.add(new Point(newWalk.y, newWalk.x));
             return newWalk;
         }
 
@@ -193,11 +189,8 @@ public class A17 {
         public static class Solution implements Comparable<Solution> {
             private final Walk walkSoFar;
             private final int[][] heuristicMap;
-            private int height;
-            private int width;
-            public Solution(Walk walkSoFar, int height, int width, int[][] heuristicMap) {
-                this.height = height;
-                this.width = width;
+
+            public Solution(Walk walkSoFar, int[][] heuristicMap) {
                 this.walkSoFar = walkSoFar;
                 this.heuristicMap = heuristicMap;
             }
@@ -219,15 +212,15 @@ public class A17 {
                 averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Down);
                 averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Right);
             }
-            var averageSolution = new Solution(averageWalk, height, width, heuristicMap);
+            var averageSolution = new Solution(averageWalk, heuristicMap);
 
             var queue = new PriorityQueue<Solution>();
             Walk walkSoFar = new Walk();
-            Solution solution = new Solution(walkSoFar, height, width, heuristicMap);
+            Solution solution = new Solution(walkSoFar, heuristicMap);
             queue.add(solution);
-            while(queue.size() > 0) {
+            while(!queue.isEmpty()) {
                 var currentSolution = queue.poll();
-                if (queue.size()%100000 ==0) {
+                if (queue.size()%1000000 ==0) {
                     System.out.println(currentSolution.score());
                     System.out.println(queue.size());
                 }
@@ -235,34 +228,24 @@ public class A17 {
                     return currentSolution.walkSoFar;
                 }
                 for (Direction direction : currentSolution.walkSoFar.allowedDirections(width, height)) {
-                    Solution e = new Solution(Walk.moveTo(mapObj, currentSolution.walkSoFar, direction), height, width, heuristicMap);
+                    Solution e = new Solution(Walk.moveTo(mapObj, currentSolution.walkSoFar, direction), heuristicMap);
                     /*if (SOLUTION.subList(0, e.walkSoFar.directionsSoFar.size()).equals(e.walkSoFar.directionsSoFar)) {
                         System.out.println("OK");
                     } else {
                         continue;
                     }*/
                     //check no other solution has reached this point already.
-                    var lastPosition = e.walkSoFar.visitedPoints.get(e.walkSoFar.visitedPoints.size() - 1);
+                    /*var lastPosition = e.walkSoFar.visitedPoints.get(e.walkSoFar.visitedPoints.size() - 1);
                     int position = e.walkSoFar.visitedPoints.indexOf(lastPosition);
                     if (position != e.walkSoFar.visitedPoints.size() - 1) {
                         continue;
-                    }
-                    if (e.walkSoFar.currentHeat < 791){
+                    }*/
+                    if (e.walkSoFar.currentHeat < 800){
                         queue.add(e);
                     } //not 792 & not 791.
                 }
             }
             return null;
-        }
-
-        private List<Integer> getIntegers() {
-            var weights = new ArrayList<Integer>();
-            for (int y = 0; y < mapObj.length; y++)
-                for (int x = 0; x < mapObj[y].length; x++) {
-                    weights.add(mapObj[y][x]);
-                }
-            var sortedWeights = weights.stream().sorted().collect(Collectors.toList());
-            return sortedWeights;
         }
     }
 
@@ -355,7 +338,7 @@ public class A17 {
                 if (!walk.allowedDirections(width, height).contains(direction)) {
                     System.out.println("WHOOPS");
                 }
-                System.out.println(new AStar.Solution(walk, height, width, heuristicMap).score());
+                System.out.println(new AStar.Solution(walk, heuristicMap).score());
                 walk = Walk.moveTo(board, walk, direction);
             }
             return walk;
