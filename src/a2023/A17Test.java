@@ -115,6 +115,12 @@ class A17Test {
     }
 
 
+    @Test
+    void heuristicMapBuilder() {
+        var builder = new A17.HeuristicMapBuilder();
+        assertNotNull(builder.build(testMap()));
+    }
+
 
     private int[][] testMap() {
         return A17.loadMap(map);
