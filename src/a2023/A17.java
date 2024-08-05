@@ -213,6 +213,14 @@ public class A17 {
 
         public Walk find() {
             int[][] heuristicMap = new HeuristicMapBuilder().build(mapObj);
+            int[][] bestSolutions = new int[mapObj.length][mapObj[0].length];
+            Walk averageWalk = new Walk();
+            for (int i = 0; i < height - 1; i++) {
+                averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Down);
+                averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Right);
+            }
+            var averageSolution = new Solution(averageWalk, height, width, heuristicMap);
+
             var queue = new PriorityQueue<Solution>();
             Walk walkSoFar = new Walk();
             Solution solution = new Solution(walkSoFar, height, width, heuristicMap);
@@ -233,15 +241,15 @@ public class A17 {
                     } else {
                         continue;
                     }*/
+                    //check no other solution has reached this point already.
                     var lastPosition = e.walkSoFar.visitedPoints.get(e.walkSoFar.visitedPoints.size() - 1);
                     int position = e.walkSoFar.visitedPoints.indexOf(lastPosition);
                     if (position != e.walkSoFar.visitedPoints.size() - 1) {
-                        System.out.print(".");
                         continue;
                     }
-                    //if (e.walkSoFar.currentHeat < 800){
+                    if (e.walkSoFar.currentHeat < 791){
                         queue.add(e);
-                    //}
+                    } //not 792 & not 791.
                 }
             }
             return null;
