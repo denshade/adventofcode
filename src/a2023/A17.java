@@ -236,11 +236,12 @@ public class A17 {
                     var lastPosition = e.walkSoFar.visitedPoints.get(e.walkSoFar.visitedPoints.size() - 1);
                     int position = e.walkSoFar.visitedPoints.indexOf(lastPosition);
                     if (position != e.walkSoFar.visitedPoints.size() - 1) {
+                        System.out.print(".");
                         continue;
                     }
-                    if (e.walkSoFar.directionsSoFar.size() < 29){
+                    //if (e.walkSoFar.currentHeat < 800){
                         queue.add(e);
-                    }
+                    //}
                 }
             }
             return null;
