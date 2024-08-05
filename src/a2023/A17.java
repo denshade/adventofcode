@@ -122,10 +122,10 @@ public class A17 {
         public static Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
             var newWalk = walk.clone();
             switch(direction) {
-                case Up -> newWalk.y = newWalk.y-1;
-                case Down -> newWalk.y = newWalk.y + 1;
-                case Left -> newWalk.x = newWalk.x - 1;
-                case Right -> newWalk.x = newWalk.x + 1;
+                case Up -> newWalk.y--;
+                case Down -> newWalk.y++;
+                case Left -> newWalk.x--;
+                case Right -> newWalk.x++;
             }
             newWalk.currentDirection = direction;
             newWalk.currentHeat += mapObj[newWalk.y][newWalk.x];
@@ -207,6 +207,9 @@ public class A17 {
         public Walk find() {
             int[][] heuristicMap = new HeuristicMapBuilder().build(mapObj);
             int[][] bestSolutions = new int[mapObj.length][mapObj[0].length];
+            for (int y = 0; y < bestSolutions.length; y++)
+                for (int x = 0; x < bestSolutions.length; x++)
+                    bestSolutions[y][x] = Integer.MAX_VALUE;
             Walk averageWalk = new Walk();
             for (int i = 0; i < height - 1; i++) {
                 averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Down);
@@ -229,6 +232,8 @@ public class A17 {
                 }
                 for (Direction direction : currentSolution.walkSoFar.allowedDirections(width, height)) {
                     Solution e = new Solution(Walk.moveTo(mapObj, currentSolution.walkSoFar, direction), heuristicMap);
+                    //if (bestSolutions[e.walkSoFar.y][e.walkSoFar.x] < e.walkSoFar.currentHeat) continue;
+                    //bestSolutions[e.walkSoFar.y][e.walkSoFar.x] = e.walkSoFar.currentHeat;
                     /*if (SOLUTION.subList(0, e.walkSoFar.directionsSoFar.size()).equals(e.walkSoFar.directionsSoFar)) {
                         System.out.println("OK");
                     } else {
@@ -240,9 +245,9 @@ public class A17 {
                     if (position != e.walkSoFar.visitedPoints.size() - 1) {
                         continue;
                     }*/
-                    if (e.walkSoFar.currentHeat < 800){
+                    if (e.walkSoFar.currentHeat <= 1265){ //no solution for less than 1265.
                         queue.add(e);
-                    } //not 792 & not 791.
+                    } //not 792 & not 791. not 936.
                 }
             }
             return null;
