@@ -242,13 +242,16 @@ public class A17 {
         public Walk find() {
             long seed = System.currentTimeMillis();
             var random = new Random(seed);
-            int chancePct = 10;
             System.out.println("using seed "+ seed);
             int minScore = Integer.MAX_VALUE;
+            int bestSize = Integer.MAX_VALUE;
             int maxScore = Integer.MIN_VALUE;
             int ct = 0;
-            while(true) {
-                Walk walk = new Walk();
+            Walk walk = null;
+            while(System.currentTimeMillis() - seed < 1000*60*5) {
+                walk = new Walk();
+                double chancePct = 90;
+                double delta = 0.5;
                 while(!walk.isFinal(height, width)) {
                     ArrayList<Walk> sortedWalks = getHeuristicSorted(walk);
                     if (random.nextInt(100) <= chancePct) {
@@ -256,19 +259,23 @@ public class A17 {
                     } else {
                         walk = sortedWalks.get(random.nextInt(sortedWalks.size()));
                     }
+                    chancePct += delta;
                 }
                 ct ++;
                 if (walk.currentHeat < minScore){
                     minScore = walk.currentHeat;
+                    bestSize = walk.directionsSoFar.size();
                 }
                 if (walk.currentHeat > maxScore){
                     maxScore = walk.currentHeat;
                 }
                 if (ct == 10000) {
                     ct = 0;
-                    System.out.println(minScore + " " + maxScore);
+                    System.out.println(minScore + " " + maxScore + " " + bestSize);
                 }
             }
+            System.out.println(minScore + " " + maxScore + " " + bestSize);
+            return walk;
         }
         private ArrayList<Walk> getHeuristicSorted(Walk walk) {
             var sortedWalks = new ArrayList<Walk>();
