@@ -255,6 +255,14 @@ class A17Test {
         assertEquals(102, actual.currentHeat);
     }
 
+    @Test
+    void ARandomGreedSearchFull() {
+        var searcher = new A17.RandSearch(A17.loadMap(actual));
+        A17.Walk actual = searcher.find();
+        assertNotNull(actual);
+        assertEquals(102, actual.currentHeat);
+    }
+
 
     @Test
     @Disabled

@@ -146,9 +146,17 @@ public class A17 {
         @Override
         public boolean isBad() {
             var lastPosition = visitedPoints.get(visitedPoints.size() - 1);
-            int position = visitedPoints.indexOf(lastPosition);
-            if (position != visitedPoints.size() - 1) {
-                return true;
+            for (int p = 0; p < visitedPoints.size() - 2; p++) {
+                var currentPoint = visitedPoints.get(p);
+                if (currentPoint.equals(lastPosition)) {
+                    return true;
+                }
+                if (currentPoint.x == lastPosition.x && currentPoint.y == lastPosition.y - 1 || currentPoint.y == lastPosition.y + 1) {
+                    return true;
+                }
+                if (currentPoint.y == lastPosition.y && currentPoint.x == lastPosition.x - 1 || currentPoint.x == lastPosition.x + 1) {
+                    return true;
+                }
             }
             return false;
         }
@@ -218,6 +226,62 @@ public class A17 {
         }
     }
 
+
+    public static class RandSearch {
+        private int[][] mapObj;
+        private int height;
+        private int width;
+        int[][] heuristicMap;
+
+        public RandSearch(int[][] mapObj) {
+            this.mapObj = mapObj;
+            height = mapObj.length;
+            width = mapObj[0].length;
+            heuristicMap = new HeuristicMapBuilder().build(mapObj);
+        }
+        public Walk find() {
+            long seed = System.currentTimeMillis();
+            var random = new Random(seed);
+            int chancePct = 10;
+            System.out.println("using seed "+ seed);
+            int minScore = Integer.MAX_VALUE;
+            int maxScore = Integer.MIN_VALUE;
+            int ct = 0;
+            while(true) {
+                Walk walk = new Walk();
+                while(!walk.isFinal(height, width)) {
+                    ArrayList<Walk> sortedWalks = getHeuristicSorted(walk);
+                    if (random.nextInt(100) <= chancePct) {
+                        walk = sortedWalks.get(0);
+                    } else {
+                        walk = sortedWalks.get(random.nextInt(sortedWalks.size()));
+                    }
+                }
+                ct ++;
+                if (walk.currentHeat < minScore){
+                    minScore = walk.currentHeat;
+                }
+                if (walk.currentHeat > maxScore){
+                    maxScore = walk.currentHeat;
+                }
+                if (ct == 10000) {
+                    ct = 0;
+                    System.out.println(minScore + " " + maxScore);
+                }
+            }
+        }
+        private ArrayList<Walk> getHeuristicSorted(Walk walk) {
+            var sortedWalks = new ArrayList<Walk>();
+            for (Direction direction : walk.allowedDirections(width, height)) {
+                var w = walk.moveTo(mapObj, walk, direction);
+                sortedWalks.add(w);
+            }
+            sortedWalks.sort(Comparator.comparingInt(a -> heuristicMap[a.y][a.x]));
+            return sortedWalks;
+        }
+
+    }
+
     public static class BruteGreedSearch {
         private int[][] mapObj;
         private int height;
@@ -249,12 +313,7 @@ public class A17 {
             }
             if (bestWalk != null && walk.currentHeat > bestWalk.currentHeat) return bestWalk;
             if (walk.directionsSoFar.size() > 200) return bestWalk;
-            var sortedWalks = new ArrayList<Walk>();
-            for (Direction direction : walk.allowedDirections(width, height)) {
-                var w = walk.moveTo(mapObj, walk, direction);
-                sortedWalks.add(w);
-            }
-            sortedWalks.sort(Comparator.comparingInt(a -> heuristicMap[a.y][a.x]));
+            ArrayList<Walk> sortedWalks = getHeuristicSorted(walk);
             Walk bestWalk = null;
             for (Walk w : sortedWalks) {
                 var resultingWalk = findRecurse(w);
@@ -263,6 +322,16 @@ public class A17 {
                 }
             }
             return bestWalk;
+        }
+
+        private ArrayList<Walk> getHeuristicSorted(Walk walk) {
+            var sortedWalks = new ArrayList<Walk>();
+            for (Direction direction : walk.allowedDirections(width, height)) {
+                var w = walk.moveTo(mapObj, walk, direction);
+                sortedWalks.add(w);
+            }
+            sortedWalks.sort(Comparator.comparingInt(a -> heuristicMap[a.y][a.x]));
+            return sortedWalks;
         }
     }
     public static class AStar {
@@ -284,7 +353,7 @@ public class A17 {
                 this.heuristicMap = heuristicMap;
             }
             public int score() {
-                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1);
+                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1.5);
             }
 
             @Override
@@ -312,7 +381,7 @@ public class A17 {
             while(!queue.isEmpty()) {
                 var currentSolution = queue.poll();
                 if (queue.size()%1000000 ==0) {
-                    System.out.println(currentSolution.score());
+                    System.out.println(currentSolution.score() + " vs " + currentSolution.walkSoFar.currentHeat );
                     System.out.println(queue.size());
                 }
                 if (currentSolution.walkSoFar.isFinal(height, width)) {
