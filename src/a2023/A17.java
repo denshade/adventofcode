@@ -77,11 +77,7 @@ public class A17 {
         public int y = 0;
         public int currentHeat = 0;
         public List<Direction> directionsSoFar = new ArrayList<>();
-        //public List<Point> visitedPoints = new ArrayList<>();
 
-        public Walk() {
-            /*visitedPoints.add(new Point(0,0));*/
-        }
 
         public List<Direction> allowedDirections(int width, int height){
             var list = new ArrayList<Direction>(4);
@@ -115,7 +111,6 @@ public class A17 {
             walk.x = x;
             walk.y = y;
             walk.currentHeat = currentHeat;
-            //walk.visitedPoints = new ArrayList<>(visitedPoints);
             return walk;
         }
 
@@ -130,12 +125,46 @@ public class A17 {
             newWalk.currentDirection = direction;
             newWalk.currentHeat += mapObj[newWalk.y][newWalk.x];
             newWalk.directionsSoFar.add(direction);
-            //newWalk.visitedPoints.add(new Point(newWalk.y, newWalk.x));
             return newWalk;
         }
 
         public boolean isFinal(int height, int width) {
             return (x == width - 1 && y == height - 1);
+        }
+    }
+
+    public static class WalkWithPoints extends Walk {
+        public List<Point> visitedPoints = new ArrayList<>();
+
+        public WalkWithPoints() {
+            visitedPoints.add(new Point(0,0));
+        }
+
+        public WalkWithPoints clone() {
+            WalkWithPoints walk = new WalkWithPoints();
+            walk.directionsSoFar = new ArrayList<>(directionsSoFar);
+            walk.currentDirection = currentDirection;
+            walk.x = x;
+            walk.y = y;
+            walk.currentHeat = currentHeat;
+            walk.visitedPoints = new ArrayList<>(visitedPoints);
+            return walk;
+        }
+
+        public static Walk moveTo(int[][] mapObj, WalkWithPoints walk, Direction direction) {
+
+            var newWalk = walk.clone();
+            switch(direction) {
+                case Up -> newWalk.y--;
+                case Down -> newWalk.y++;
+                case Left -> newWalk.x--;
+                case Right -> newWalk.x++;
+            }
+            newWalk.currentDirection = direction;
+            newWalk.currentHeat += mapObj[newWalk.y][newWalk.x];
+            newWalk.directionsSoFar.add(direction);
+            newWalk.visitedPoints.add(new Point(newWalk.y, newWalk.x));
+            return newWalk;
         }
     }
 
@@ -176,6 +205,53 @@ public class A17 {
         }
     }
 
+    public static class BruteGreedSearch {
+        private int[][] mapObj;
+        private int height;
+        private int width;
+        int[][] heuristicMap;
+        Walk bestWalk;
+
+        public BruteGreedSearch(int[][] mapObj) {
+            this.mapObj = mapObj;
+            height = mapObj.length;
+            width = mapObj[0].length;
+            heuristicMap = new HeuristicMapBuilder().build(mapObj);
+            bestWalk = new Walk();
+            bestWalk.currentHeat = 920;
+        }
+        public Walk find() {
+            width = mapObj[0].length;
+            height = mapObj.length;
+            Walk walk = new Walk();
+            return findRecurse(walk);
+        }
+        public Walk findRecurse(Walk walk) {
+            if (walk.isFinal(height, width)) {
+                if (bestWalk == null || walk.currentHeat < bestWalk.currentHeat) {
+                    bestWalk = walk;
+                    System.out.println(bestWalk.currentHeat);
+                }
+                return walk;
+            }
+            if (bestWalk != null && walk.currentHeat > bestWalk.currentHeat) return bestWalk;
+            if (walk.directionsSoFar.size() > 200) return bestWalk;
+            var sortedWalks = new ArrayList<Walk>();
+            for (Direction direction : walk.allowedDirections(width, height)) {
+                var w = Walk.moveTo(mapObj, walk, direction);
+                sortedWalks.add(w);
+            }
+            sortedWalks.sort(Comparator.comparingInt(a -> heuristicMap[a.y][a.x]));
+            Walk bestWalk = null;
+            for (Walk w : sortedWalks) {
+                var resultingWalk = findRecurse(w);
+                if (bestWalk == null || resultingWalk.currentHeat < bestWalk.currentHeat) {
+                    bestWalk = resultingWalk;
+                }
+            }
+            return bestWalk;
+        }
+    }
     public static class AStar {
         private int[][] mapObj;
         private int height;
@@ -195,7 +271,7 @@ public class A17 {
                 this.heuristicMap = heuristicMap;
             }
             public int score() {
-                return walkSoFar.currentHeat + heuristicMap[walkSoFar.y][walkSoFar.x];
+                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1.225);
             }
 
             @Override
@@ -228,6 +304,7 @@ public class A17 {
                     System.out.println(queue.size());
                 }
                 if (currentSolution.walkSoFar.isFinal(height, width)) {
+                    System.out.println(currentSolution.walkSoFar.directionsSoFar.size());
                     return currentSolution.walkSoFar;
                 }
                 for (Direction direction : currentSolution.walkSoFar.allowedDirections(width, height)) {
@@ -245,13 +322,16 @@ public class A17 {
                     if (position != e.walkSoFar.visitedPoints.size() - 1) {
                         continue;
                     }*/
-                    if (e.walkSoFar.currentHeat <= 1265){ //no solution for less than 1265.
+                    if (e.walkSoFar.currentHeat <= 922){//e.walkSoFar.currentHeat <= 922){ //no solution for less than 1265.
                         queue.add(e);
                     } //not 792 & not 791. not 936.
                 }
             }
             return null;
         }
+    }
+    public static class GeneticSearch {
+        
     }
 
     public static class HeuristicMapBuilder {

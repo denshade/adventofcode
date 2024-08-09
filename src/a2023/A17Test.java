@@ -238,7 +238,26 @@ class A17Test {
     }
 
     @Test
-    //@Disabled
+    @Disabled
+    void ABruteGreedSearch() {
+        var searcher = new A17.BruteGreedSearch(testMap());
+        A17.Walk actual = searcher.find();
+        assertNotNull(actual);
+        assertEquals(102, actual.currentHeat);
+    }
+
+    @Test
+    @Disabled
+    void ABruteGreedSearchFull() {
+        var searcher = new A17.BruteGreedSearch(A17.loadMap(actual));
+        A17.Walk actual = searcher.find();
+        assertNotNull(actual);
+        assertEquals(102, actual.currentHeat);
+    }
+
+
+    @Test
+    @Disabled
     void AStarSearchBig() {
         var searcher = new A17.AStar(A17.loadMap(actual));
         A17.Walk actual = searcher.find();
