@@ -78,6 +78,9 @@ public class A17 {
         public int currentHeat = 0;
         public List<Direction> directionsSoFar = new ArrayList<>();
 
+        public boolean isBad(){
+            return false;
+        }
 
         public List<Direction> allowedDirections(int width, int height){
             var list = new ArrayList<Direction>(4);
@@ -114,7 +117,7 @@ public class A17 {
             return walk;
         }
 
-        public static Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
+        public Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
             var newWalk = walk.clone();
             switch(direction) {
                 case Up -> newWalk.y--;
@@ -140,6 +143,16 @@ public class A17 {
             visitedPoints.add(new Point(0,0));
         }
 
+        @Override
+        public boolean isBad() {
+            var lastPosition = visitedPoints.get(visitedPoints.size() - 1);
+            int position = visitedPoints.indexOf(lastPosition);
+            if (position != visitedPoints.size() - 1) {
+                return true;
+            }
+            return false;
+        }
+
         public WalkWithPoints clone() {
             WalkWithPoints walk = new WalkWithPoints();
             walk.directionsSoFar = new ArrayList<>(directionsSoFar);
@@ -151,9 +164,9 @@ public class A17 {
             return walk;
         }
 
-        public static Walk moveTo(int[][] mapObj, WalkWithPoints walk, Direction direction) {
+        public Walk moveTo(int[][] mapObj, Walk walk, Direction direction) {
 
-            var newWalk = walk.clone();
+            var newWalk = (WalkWithPoints)walk.clone();
             switch(direction) {
                 case Up -> newWalk.y--;
                 case Down -> newWalk.y++;
@@ -188,7 +201,7 @@ public class A17 {
             }
             Walk bestWalk = null;
             for (Direction dir : currentWalk.allowedDirections(width, height)) {
-                var newWalk = Walk.moveTo(mapObj, currentWalk, dir);
+                var newWalk = currentWalk.moveTo(mapObj, currentWalk, dir);
                 var bestFinalWalk = findNext(newWalk);
                 if (bestFinalWalk == null) continue;// no solutions here, skip.
                 if (bestWalk == null) {
@@ -238,7 +251,7 @@ public class A17 {
             if (walk.directionsSoFar.size() > 200) return bestWalk;
             var sortedWalks = new ArrayList<Walk>();
             for (Direction direction : walk.allowedDirections(width, height)) {
-                var w = Walk.moveTo(mapObj, walk, direction);
+                var w = walk.moveTo(mapObj, walk, direction);
                 sortedWalks.add(w);
             }
             sortedWalks.sort(Comparator.comparingInt(a -> heuristicMap[a.y][a.x]));
@@ -253,9 +266,9 @@ public class A17 {
         }
     }
     public static class AStar {
-        private int[][] mapObj;
-        private int height;
-        private int width;
+        private final int[][] mapObj;
+        private final int height;
+        private final int width;
 
         public AStar(int[][] mapObj) {
             this.mapObj = mapObj;
@@ -271,7 +284,7 @@ public class A17 {
                 this.heuristicMap = heuristicMap;
             }
             public int score() {
-                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1.225);
+                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1);
             }
 
             @Override
@@ -286,15 +299,14 @@ public class A17 {
             for (int y = 0; y < bestSolutions.length; y++)
                 for (int x = 0; x < bestSolutions.length; x++)
                     bestSolutions[y][x] = Integer.MAX_VALUE;
-            Walk averageWalk = new Walk();
+ /*           Walk averageWalk = new Walk();
             for (int i = 0; i < height - 1; i++) {
-                averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Down);
-                averageWalk = Walk.moveTo(mapObj, averageWalk, Direction.Right);
-            }
-            var averageSolution = new Solution(averageWalk, heuristicMap);
+                averageWalk = averageWalk.moveTo(mapObj, averageWalk, Direction.Down);
+                averageWalk = averageWalk.moveTo(mapObj, averageWalk, Direction.Right);
+            }*/
 
             var queue = new PriorityQueue<Solution>();
-            Walk walkSoFar = new Walk();
+            Walk walkSoFar = new WalkWithPoints();
             Solution solution = new Solution(walkSoFar, heuristicMap);
             queue.add(solution);
             while(!queue.isEmpty()) {
@@ -308,7 +320,8 @@ public class A17 {
                     return currentSolution.walkSoFar;
                 }
                 for (Direction direction : currentSolution.walkSoFar.allowedDirections(width, height)) {
-                    Solution e = new Solution(Walk.moveTo(mapObj, currentSolution.walkSoFar, direction), heuristicMap);
+                    Solution e = new Solution(walkSoFar.moveTo(mapObj, currentSolution.walkSoFar, direction), heuristicMap);
+                    if (e.walkSoFar.isBad()) continue;
                     //if (bestSolutions[e.walkSoFar.y][e.walkSoFar.x] < e.walkSoFar.currentHeat) continue;
                     //bestSolutions[e.walkSoFar.y][e.walkSoFar.x] = e.walkSoFar.currentHeat;
                     /*if (SOLUTION.subList(0, e.walkSoFar.directionsSoFar.size()).equals(e.walkSoFar.directionsSoFar)) {
@@ -404,15 +417,6 @@ public class A17 {
             this.board = board;
         }
 
-        private List<Integer> getIntegers() {
-            var weights = new ArrayList<Integer>();
-            for (int y = 0; y < board.length; y++)
-                for (int x = 0; x < board[y].length; x++) {
-                    weights.add(board[y][x]);
-                }
-            return weights.stream().sorted().collect(Collectors.toList());
-        }
-
         public Walk find() {
             int[][] heuristicMap = new HeuristicMapBuilder().build(board);
 
@@ -424,7 +428,7 @@ public class A17 {
                     System.out.println("WHOOPS");
                 }
                 System.out.println(new AStar.Solution(walk, heuristicMap).score());
-                walk = Walk.moveTo(board, walk, direction);
+                walk = walk.moveTo(board, walk, direction);
             }
             return walk;
 

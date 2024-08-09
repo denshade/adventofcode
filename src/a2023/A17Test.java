@@ -187,31 +187,31 @@ class A17Test {
     @Test
     void walkTo() {
         var w = new A17.Walk();
-        var newW = A17.Walk.moveTo(testMap(), w, Down);
+        var newW = w.moveTo(testMap(), w, Down);
         assertEquals(0, newW.x);
         assertEquals(1, newW.y);
         assertEquals(Down, newW.currentDirection);
         assertEquals(List.of(Down), newW.directionsSoFar);
         assertEquals(3, newW.currentHeat);
-        var newW2 = A17.Walk.moveTo(testMap(), newW, Down);
+        var newW2 = w.moveTo(testMap(), newW, Down);
         assertEquals(0, newW2.x);
         assertEquals(2, newW2.y);
         assertEquals(Down, newW2.currentDirection);
         assertEquals(List.of(Down, Down), newW2.directionsSoFar);
         assertEquals(6, newW2.currentHeat);
-        var newW3 = A17.Walk.moveTo(testMap(), newW2, Right);
+        var newW3 = w.moveTo(testMap(), newW2, Right);
         assertEquals(1, newW3.x);
         assertEquals(2, newW3.y);
         assertEquals(Right, newW3.currentDirection);
         assertEquals(List.of(Down, Down, Right), newW3.directionsSoFar);
         assertEquals(8, newW3.currentHeat);
-        var newW4 = A17.Walk.moveTo(testMap(), newW3, Left);
+        var newW4 = w.moveTo(testMap(), newW3, Left);
         assertEquals(0, newW4.x);
         assertEquals(2, newW4.y);
         assertEquals(Left, newW4.currentDirection);
         assertEquals(List.of(Down, Down, Right, Left), newW4.directionsSoFar);
         assertEquals(11, newW4.currentHeat);
-        var newW5 = A17.Walk.moveTo(testMap(), newW4, Up);
+        var newW5 = w.moveTo(testMap(), newW4, Up);
         assertEquals(0, newW5.x);
         assertEquals(1, newW5.y);
         assertEquals(Up, newW5.currentDirection);
