@@ -263,13 +263,19 @@ class A17Test {
         assertEquals(102, actual.currentHeat);
     }
 
+    //922 = [Down, Down, Right, Down, Down, Right, Right, Down, Right, Right, Right, Down, Right, Down, Down, Right, Right, Down, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Up, Up, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Down, Right, Up, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Up, Right, Up, Right, Right, Right, Down, Right, Down, Right, Right, Down, Right, Right, Right, Down, Right, Right, Right, Down, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Up, Right, Right, Up, Up, Right, Right, Right, Down, Down, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Right, Down, Right, Down, Right, Right, Right, Down, Right, Down, Down, Down, Right, Down, Down, Right, Down, Down, Down, Right, Down, Right, Right, Right, Down, Right, Right, Right, Down, Down, Down, Right, Down, Right, Down, Right, Down, Down, Right, Right, Down, Right, Down, Down, Down, Right, Down, Down, Right, Down, Down, Down, Right, Right, Right, Down, Down, Down, Right, Right, Down, Down, Right, Down, Down, Down, Left, Down, Down, Down, Left, Down, Down, Down, Left, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Right, Down, Left, Down, Down, Down, Right, Down, Right, Right, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Right, Down, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Left, Left, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Left, Down, Left, Down, Down, Down, Right, Down, Down, Left, Down, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Right, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right]
 
+    @Test
+    void mapSearch() {
+
+    }
     @Test
     @Disabled
     void AStarSearchBig() {
         var searcher = new A17.AStar(A17.loadMap(actual));
         A17.Walk actual = searcher.find();
         assertNotNull(actual);
+        System.out.println(actual.directionsSoFar.toString());
         assertEquals(102, actual.currentHeat);
     }
 
@@ -298,6 +304,12 @@ class A17Test {
     void heuristicMapBuilder() {
         var builder = new A17.HeuristicMapBuilder();
         assertNotNull(builder.build(testMap()));
+    }
+
+    @Test
+    void testSolution() {
+        var d = List.of(Down, Down, Right, Down, Down, Right, Right, Down, Right, Right, Right, Down, Right, Down, Down, Right, Right, Down, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Up, Up, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Down, Right, Up, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Up, Right, Up, Right, Right, Right, Down, Right, Down, Right, Right, Down, Right, Right, Right, Down, Right, Right, Right, Down, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Right, Down, Right, Right, Right, Up, Right, Right, Right, Down, Right, Right, Up, Right, Right, Up, Up, Right, Right, Right, Down, Down, Right, Right, Up, Right, Right, Right, Down, Right, Right, Right, Up, Right, Right, Down, Right, Down, Right, Right, Right, Down, Right, Down, Down, Down, Right, Down, Down, Right, Down, Down, Down, Right, Down, Right, Right, Right, Down, Right, Right, Right, Down, Down, Down, Right, Down, Right, Down, Right, Down, Down, Right, Right, Down, Right, Down, Down, Down, Right, Down, Down, Right, Down, Down, Down, Right, Right, Right, Down, Down, Down, Right, Right, Down, Down, Right, Down, Down, Down, Left, Down, Down, Down, Left, Down, Down, Down, Left, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Right, Down, Left, Down, Down, Down, Right, Down, Right, Right, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Right, Down, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Left, Left, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Left, Down, Left, Down, Down, Down, Right, Down, Down, Left, Down, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Right, Down, Down, Down, Left, Down, Down, Right, Down, Down, Left, Down, Down, Down, Right, Down, Down, Down, Right);
+        System.out.println(A17.SolutionPrinter.printSolution(A17.loadMap(actual), d));
     }
 
 

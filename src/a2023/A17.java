@@ -71,6 +71,27 @@ public class A17 {
         }
     }
 
+    public static class SolutionPrinter {
+
+        public static String printSolution(int[][] board, List<Direction> directions){
+            char[][] charBoard = new char[board.length][board[0].length];
+            Walk w = new Walk();
+            for (Direction direction: directions) {
+                w = w.moveTo(board, w, direction);
+                charBoard[w.y][w.x] = (char)('0'+(char)board[w.y][w.x]);
+            }
+            StringBuilder builder = new StringBuilder();
+            for (int y = 0; y < charBoard.length; y++){
+                for (int x = 0; x < charBoard[0].length; x++) {
+                    builder.append(charBoard[y][x]);
+                }
+                builder.append('\n');
+            }
+            return builder.toString();
+        }
+
+    }
+
     public static class Walk {
         public Direction currentDirection = Direction.Down;
         public int x = 0;
@@ -289,6 +310,23 @@ public class A17 {
 
     }
 
+    public static class MapSearch {
+        private int[][] mapObj;
+        private int height;
+        private int width;
+        int[][] heuristicMap;
+        Walk bestWalk;
+
+        public MapSearch(int[][] mapObj) {
+            this.mapObj = mapObj;
+            height = mapObj.length;
+            width = mapObj[0].length;
+            heuristicMap = new HeuristicMapBuilder().build(mapObj);
+            bestWalk = new Walk();
+            bestWalk.currentHeat = 920;
+        }
+    }
+
     public static class BruteGreedSearch {
         private int[][] mapObj;
         private int height;
@@ -360,7 +398,7 @@ public class A17 {
                 this.heuristicMap = heuristicMap;
             }
             public int score() {
-                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1.5);
+                return walkSoFar.currentHeat + (int)(heuristicMap[walkSoFar.y][walkSoFar.x] * 1.219);
             }
 
             @Override
@@ -382,7 +420,7 @@ public class A17 {
             }*/
 
             var queue = new PriorityQueue<Solution>();
-            Walk walkSoFar = new WalkWithPoints();
+            Walk walkSoFar = new Walk();
             Solution solution = new Solution(walkSoFar, heuristicMap);
             queue.add(solution);
             while(!queue.isEmpty()) {
@@ -411,7 +449,7 @@ public class A17 {
                     if (position != e.walkSoFar.visitedPoints.size() - 1) {
                         continue;
                     }*/
-                    if (e.walkSoFar.currentHeat <= 922){//e.walkSoFar.currentHeat <= 922){ //no solution for less than 1265.
+                    if (e.score() < 1000 /*&&e.walkSoFar.currentHeat <= 922*/){//e.walkSoFar.currentHeat <= 922){ //no solution for less than 1265.
                         queue.add(e);
                     } //not 792 & not 791. not 936.
                 }
@@ -419,6 +457,7 @@ public class A17 {
             return null;
         }
     }
+    //Divide and conquer.
     public static class GeneticSearch {
         
     }
