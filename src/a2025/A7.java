@@ -17,8 +17,8 @@ public class A7 {
                 }
                 if (map[y][x] == '|') {
                     if (map[y + 1][x] == '^') {
-                        map[y+1][x -1] = '|';
-                        map[y+1][x +1] = '|';
+                        map[y + 1][x - 1] = '|';
+                        map[y + 1][x + 1] = '|';
                         splitterHit++;
                     } else {
                         map[y + 1][x] = '|';
